@@ -1,0 +1,269 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>net</title>
+<link href="../css.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="main">
+	<div class="title">
+		<a href="#tcp_server">tcp_server</a>
+		<a href="#tcp_client">tcp_client</a>
+		
+	</div>
+	<div class="note"><a name="tcp_server"></a>
+		<p><span class="flag">tcp_server</span>
+<pre><span class="care">#include &lt;dark-cpp/net/tcp/server.hpp&gt;</span>
+
+基於 boost asio 的 tcp server
+(boost::system::error_code 操作方式)
+</pre>
+		</p>
+
+		<p><span class="flag">使用 方式</span>
+<pre>1	從 tcp_server 派生 子類
+
+2	實現 
+	virtual void accepted(const boost::system::error_code& e,tcp_socket_t s)=0;
+	virtual void closed(tcp_socket_t s)=0;
+	virtual void readed(tcp_socket_t s,const char* data,std::size_t bytes)=0;
+	virtual void writed(const boost::system::error_code& e,tcp_socket_t s,const char* data,std::size_t bytes)
+	{
+	}
+
+3	實例化子類 並調用 run 方法
+</pre>
+		</p>
+
+		<p><span class="flag">public</span>
+<pre>//傳入 監聽端口 網絡傳輸字節 構造
+tcp_server(const unsigned short port = 1102,std::size_t buffer_size = 10240)
+
+//返回 監聽 端口
+unsigned short port()const
+
+//返回 網絡傳輸字節
+std::size_t buffer_size()const
+
+//開始 server 服務
+void run()
+
+//向 指定socket 異步 傳輸數據 
+void write(tcp_socket_t s,const char* data,std::size_t bytes)
+</pre>
+		</p>
+
+		<p><span class="flag">example</span>
+<pre><span class="care">//main</span>
+#include "server.h"
+
+int _tmain(int argc, _TCHAR* argv[])
+{	
+	
+	try
+	{
+		unsigned short port = 1102;
+		server s(port);
+		printf("server:%u\n",s.port());
+
+		s.run();
+	}
+	catch(const boost::system::system_error& e)
+	{
+		printf("code:%u	%s\n",e.code().value(),e.what());
+	}
+
+	system("pause");
+	return 0;
+}
+
+
+
+<span class="care">//server</span>
+#pragma once
+
+#include &lt;dark-cpp/net/tcp.hpp&gt;
+
+class server:public dark::net::tcp_server
+{
+public:
+	server(const unsigned short port = 1102);
+	~server(void);
+
+protected:
+	virtual void accepted(const boost::system::error_code& e,dark::net::tcp_socket_t s);
+	virtual void closed(dark::net::tcp_socket_t s);
+	virtual void readed(dark::net::tcp_socket_t s,const char* data,std::size_t bytes);
+};
+
+#include "StdAfx.h"
+#include "server.h"
+
+
+server::server(const unsigned short port)
+	:tcp_server(port)
+{
+}
+
+
+server::~server(void)
+{
+}
+
+void server::accepted(const boost::system::error_code& e,dark::net::tcp_socket_t s)
+{
+	if(e)
+	{
+		printf("accepted errror (%u):%s",e.value(),e.message());
+		return;
+	}
+
+	printf("client port:%u	client address:%s\n",
+		s->remote_endpoint().port(),
+		s->remote_endpoint().address().to_string().c_str());
+}
+void server::closed(dark::net::tcp_socket_t s)
+{
+	printf("leave : %s:%u\n",
+		s->remote_endpoint().address().to_string().c_str(),
+		s->remote_endpoint().port());
+}
+void server::readed(dark::net::tcp_socket_t s,const char* data,std::size_t bytes)
+{
+	std::string str(data,bytes);
+	puts(str.c_str());
+
+	if(str == "help")
+	{
+		str = "this is server test";
+		write(s,str.data(),str.size());
+	}
+}
+</pre>
+		</p>
+	</div>
+
+	<div class="note"><a name="tcp_client"></a>
+		<p><span class="flag">tcp_client</span>
+<pre><span class="care">#include &lt;dark-cpp/net/tcp/client.hpp&gt;</span>
+
+基於 boost asio 的 tcp client
+(boost::system::error_code 操作方式)
+</pre>
+		</p>
+
+		<p><span class="flag">使用 方式</span>
+<pre>1	從 tcp_client 派生 子類
+
+2	實現 
+	virtual void closed()=0;
+	virtual void readed(const char* data,std::size_t bytes)=0;
+	virtual void writed(const boost::system::error_code& e,const char* data,std::size_t bytes)
+	{
+	}
+
+3	實例化子類 並調用 run 方法
+</pre>
+		</p>
+		<p><span class="flag">public</span>
+<pre>//傳入 服務器 地址 端口 網絡傳輸字節 構造 並連接
+tcp_client(const std::string server,unsigned short port,std::size_t buffer_size = 10240)
+
+//返回 服務器 地址 監聽 端口
+std::string server()const
+unsigned short port()const
+
+//返回 網絡傳輸字節
+std::size_t buffer_size()const
+
+//開始 client 服務
+void run()
+
+//向 服務器 異步 傳輸數據 
+void write(const char* data,std::size_t bytes)
+</pre>
+		</p>
+		<p><span class="flag">example</span>
+<pre><span class="care">//main</span>
+#include "client.h"
+
+void send_thread(boost::shared_ptr&lt;client&gt; c)
+{
+	std::string data;
+	while(true)
+	{
+		printf("(input)$:");
+		std::cin&gt;&gt;data;
+		c-&gt;write(data.data(),data.size());
+	}
+}
+int _tmain(int argc, _TCHAR* argv[])
+{
+	try
+	{
+		std::string ip = "127.0.0.1";
+		unsigned short port = 1102;
+
+		boost::shared_ptr&lt;client&gt; c = boost::make_shared&lt;client&gt;(ip,port);
+		printf("connect : %s:%u\n",ip.c_str(),port);
+
+		boost::thread t(boost::bind(send_thread,c));
+
+		c-&gt;run();
+	}
+	catch(const boost::system::system_error& e)
+	{
+		printf("code:%u	%s\n",e.code().value(),e.what());
+	}
+
+	system("pause");
+	return 0;
+}
+
+
+
+<span class="care">//client</span>
+#pragma once
+#include &lt;dark-cpp/net/tcp.hpp&gt;
+class client:public dark::net::tcp_client
+{
+public:
+	client(const std::string server,unsigned short port);
+	~client(void);
+
+	virtual void closed();
+	virtual void readed(const char* data,std::size_t bytes);
+};
+
+#include "StdAfx.h"
+#include "client.h"
+
+
+client::client(const std::string server,unsigned short port)
+	:dark::net::tcp_client(server,port)
+{
+}
+
+
+client::~client(void)
+{
+}
+
+void client::closed()
+{
+	puts("closed");
+}
+void client::readed(const char* data,std::size_t bytes)
+{
+	std::string str(data,bytes);
+	puts(str.c_str());
+}
+</pre>
+		</p>
+	</div>
+		
+</div>
+</body>
+</html>
+
