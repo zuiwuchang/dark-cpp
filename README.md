@@ -5,4 +5,4 @@
 故決定將 以前自己寫的lib 重新整理 並且以GPL 開源出來
 
 此項目 以 std 和 boost 作為基礎依賴 
-代碼風格 也 借鑒餘 std 和 boost
+代碼風格 也 借鑒 std 和 boost
