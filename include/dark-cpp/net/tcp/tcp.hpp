@@ -1,14 +1,13 @@
 #ifndef _DARK_CPP__NET_TCP_TCP__HPP_
 #define _DARK_CPP__NET_TCP_TCP__HPP_
 
-#include <boost/smart_ptr.hpp>
-#include<vector>
+#include "../net.hpp"
+
 
 namespace dark
 {
 	namespace net
 	{
-		typedef boost::shared_ptr<std::vector<char>> buffer_ptr_t;
 		typedef boost::shared_ptr<boost::asio::ip::tcp::socket> tcp_socket_t;
 	};
 };
