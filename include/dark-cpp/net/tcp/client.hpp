@@ -12,7 +12,7 @@ namespace dark
 		{
 		
 		public:
-			tcp_client(const std::string server,unsigned short port,std::size_t buffer_size = 10240)
+			tcp_client(std::string server,unsigned short port,std::size_t buffer_size = 10240)
 				:tcp_base_client(server,port,buffer_size)
 			{
 			}

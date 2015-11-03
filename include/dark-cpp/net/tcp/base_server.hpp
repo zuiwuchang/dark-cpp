@@ -20,7 +20,7 @@ namespace dark
 			unsigned short port_;
 			std::size_t buffer_size_;
 		public:
-			tcp_base_server(const unsigned short port = 1102,std::size_t buffer_size = 10240)
+			tcp_base_server(unsigned short port = 1102,std::size_t buffer_size = 10240)
 				:acceptor_(ios_,boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(),port))
 				,port_(port)
 				,buffer_size_(buffer_size)
@@ -104,10 +104,8 @@ namespace dark
 			}
 			
 		public:
-			void write(tcp_socket_t s,const char* data,std::size_t bytes)
+			void write(tcp_socket_t s,buffer_ptr_t buffer)
 			{
-				buffer_ptr_t buffer = boost::make_shared<std::vector<char>>(bytes,0);
-				std::copy(data,data+bytes,buffer->begin());
 				s->async_write_some(boost::asio::buffer(*buffer)
 					,boost::bind(&tcp_base_server::write_handler
 						,this
@@ -117,6 +115,12 @@ namespace dark
 						,boost::asio::placeholders::bytes_transferred
 						)
 					);
+			}
+			void write(tcp_socket_t s,const char* data,std::size_t bytes)
+			{
+				buffer_ptr_t buffer = boost::make_shared<std::vector<char>>(bytes,0);
+				std::copy(data,data+bytes,buffer->begin());
+				write(s,buffer);
 			}
 		protected:
 			virtual void accepted(const boost::system::error_code& e,tcp_socket_t s)=0;

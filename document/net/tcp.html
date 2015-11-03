@@ -10,6 +10,9 @@
 	<div class="title">
 		<a href="#tcp_server">tcp_server</a>
 		<a href="#tcp_client">tcp_client</a>
+		<a href="#message">message</a>
+		<a href="#tcp_message_server">tcp_message_server</a>
+		<a href="#tcp_message_client">tcp_message_client</a>
 		
 	</div>
 	<div class="note"><a name="tcp_server"></a>
@@ -262,7 +265,370 @@ void client::readed(const char* data,std::size_t bytes)
 </pre>
 		</p>
 	</div>
+
+	<div class="note"><a name="message"></a>
+		<p><span class="flag">message</span>
+<pre>tcp_message_server tcp_message_client 依賴 
+typedef boost::shared_ptr&lt;message&gt; message_ptr_t;
+進行消息發送
+typedef boost::shared_ptr&lt;message_handler&gt; message_handler_ptr_t;
+進行處理接收到消息
+
+</pre>
+		</p>
+		<p><span class="flag">message</span>
+<pre>//返回 消息id
+inline std::size_t id()const
+
+//壓入 一段 需要傳輸的 數據
+inline void push_data(buffer_ptr_t data)
+inline void push_data(const char* data,std::size_t bytes)
+
+//返回 消息是否為 空
+operator bool()const
+</pre>
+		</p>
+		<p><span class="flag">message_handler</span>
+<pre>message_handler 使用 std::list 保存被分割的 數據
+
+//返回 數據 條目數
+inline std::size_t size()const
+
+//返回 數據是否為 空
+inline bool empty() const
+
+//將數據 移到開始位置
+inline void begin()
+
+//將數據 移動到下一位置 並返回 是否 還有數據可讀
+inline bool next()
+
+//返回數據是否讀完
+inline bool end()
+
+//返回當前數據大小 位置
+inline std::pair&lt;char*,std::size_t&gt; get()
+</pre>
+		</p>
+		<p><span class="flag">注意</span>
+<pre>對於 message_handler 一旦 end()
+便不能調用 next() get() 否則會發生 未定義行為
+</pre>
+		</p>
+	</div>
+
+	<div class="note"><a name="tcp_message_server"></a>
+		<p><span class="flag">tcp_message_server</span>
+<pre><span class="care">#include &lt;dark-cpp/net/tcp/message_server.hpp&gt;</span>
+
+tcp_message_server 是一個 消息 服務器
+用法基本同 tcp_server 
+(
+	只是 現在 服務器/客戶端 使用定義的 協議 
+	自動將 一條 長數據信息(超過緩衝區大小 而被分多次發送/接收) 合併 
+)
+(
+	比如 在 tcp_server tcp_client 中
+	client 發送1條 10字節的 數據 
+	server 緩衝區大小為 5 server 會接受到2次 readed 回調
+
+	而在 tcp_message_server 中
+	server 只會 接受 到 1次 message_readed 回調
+	message 服務器/客戶端 會自動將 被拆分的數據 合併為1個完整的數據 
+	再交給 客戶處理
+)
+</pre>
+		</p>
+
+		<p><span class="flag">使用 方式</span>
+<pre>1	從 tcp_message_server 派生 子類
+
+2	實現 
+	virtual void accepted(const boost::system::error_code& e,tcp_socket_t s)
+	{
+		tcp_message_server::accepted(e,s);
+		...
+	}
+
+	virtual void closed(tcp_socket_t s)
+	{
+		tcp_message_server::closed(s);
+		...
+	}
+
+	virtual void message_readed(tcp_socket_t s,message_handler_ptr_t handler)=0;
+
+3	實例化子類 並調用 run 方法
+</pre>
+		</p>
+
+		<p><span class="flag">public</span>
+<pre>//創建一個新的 消息
+message_ptr_t new_message()
+
+//發送消息
+void write_message(tcp_socket_t s,message_ptr_t message)
+
+//撤消消息 
+//(僅當 new_message 後 又不想發送此消息時調用)
+void delete_message(message_ptr_t message)
+void delete_message(std::size_t id)
+
+其他參見 tcp_server
+</pre>
+		</p>
 		
+		<p><span class="flag">example</span>
+<pre><span class="care">//main</span>
+#include "stdafx.h"
+#include "server.h"
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	try
+	{
+		unsigned short port = 1102;
+		server s(port,5);
+		printf("server:%u\n",s.port());
+
+		s.run();
+	}
+	catch(const boost::system::system_error& e)
+	{
+		printf("code:%u	%s\n",e.code().value(),e.what());
+	}
+
+	return 0;
+}
+
+
+
+<span class="care">//server</span>
+#pragma once
+#include &lt;dark-cpp/net/tcp/message_server.hpp&gt;
+
+class server:public dark::net::tcp_message_server
+{
+public:
+	server(unsigned short port ,std::size_t buffer_size);
+	~server(void);
+
+protected:
+	virtual void accepted(const boost::system::error_code& e,dark::net::tcp_socket_t s);
+	virtual void closed(dark::net::tcp_socket_t s);
+	virtual void message_readed(dark::net::tcp_socket_t s,dark::net::message_handler_ptr_t handler);
+};
+
+#include "StdAfx.h"
+#include "server.h"
+
+server::server(unsigned short port,std::size_t buffer_size)
+	:tcp_message_server(port,buffer_size)
+{
+}
+
+
+server::~server(void)
+{
+}
+
+void server::accepted(const boost::system::error_code& e,dark::net::tcp_socket_t s)
+{
+	//調用基類 實現
+	tcp_message_server::accepted(e,s);
+
+
+	if(e)
+	{
+		printf("accepted errror (%u):%s",e.value(),e.message());
+		return;
+	}
+
+	printf("client port:%u	client address:%s\n",
+		s-&gt;remote_endpoint().port(),
+		s-&gt;remote_endpoint().address().to_string().c_str());
+}
+void server::closed(dark::net::tcp_socket_t s)
+{
+	//調用基類 實現
+	tcp_message_server::closed(s);
+
+	printf("leave : %s:%u\n",
+		s-&gt;remote_endpoint().address().to_string().c_str(),
+		s-&gt;remote_endpoint().port());
+}
+void server::message_readed(dark::net::tcp_socket_t s,dark::net::message_handler_ptr_t handler)
+{
+	if(!handler-&gt;empty())
+	{
+		std::string msg;
+		do
+		{
+			std::pair&lt;char*,std::size_t&gt; data = handler->get();
+			std::string str(data.first,data.second);
+			puts(str.c_str());
+			msg += str;
+		}while(handler->next());
+		puts(msg.c_str());
+	}
+	
+
+	//send
+	dark::net::message_ptr_t msg = new_message();
+	
+	std::string str = "test";
+	msg-&gt;push_data(str.c_str(),str.size());
+
+	str = " ok";
+	msg-&gt;push_data(str.c_str(),str.size());
+
+	write_message(s,msg);
+}
+</pre>
+		</p>
+
+		<p><span class="flag">注意</span>
+<pre>tcp_message_server 在重寫 accepted closed 時 
+需要調用 父類 的實現 以完成 消息處理器的 創建 清理
+
+使用 tcp_message_server 時 不應該再調用 write 發送數據
+而是調用 write_message 發送一個 帶有協議標記的 消息
+
+不要重寫 readed 處理數據 讀取 
+而是重寫 message_readed 處理完整的消息
+
+如果 message 為空 write_message 將直接返回而不進行任何操作
+</pre>
+		</p>
+	</div>
+
+	<div class="note"><a name="tcp_message_client"></a>
+		<p><span class="flag">tcp_message_client</span>
+<pre><span class="care">#include &lt;dark-cpp/net/tcp/message_client.hpp&gt;</span>
+
+tcp_message_client 是一個 消息 客戶端
+用法基本同 tcp_client 
+(參見 tcp_message_server)
+</pre>
+		</p>
+
+		<p><span class="flag">使用 方式</span>
+<pre>1	從 tcp_message_client 派生 子類
+
+2	實現 
+	virtual void closed()
+	{
+		tcp_message_client::closed();
+		...
+	}
+	virtual void message_readed(message_handler_ptr_t handler)=0;
+
+
+3	實例化子類 並調用 run 方法
+</pre>
+		</p>
+		<p><span class="flag">example</span>
+<pre><span class="care">//main</span>
+#include "client.h"
+
+void send_thread(boost::shared_ptr&lt;client&gt; c)
+{
+	std::string data;
+	while(true)
+	{
+		printf("(input)$:");
+		std::cin&gt;&gt;data;
+
+		dark::net::message_ptr_t message = c-&gt;new_message();
+		
+		message-&gt;push_data(data.data(),data.size());
+
+		std::string str = " repeat ";
+		message-&gt;push_data(str.data(),str.size());
+
+		message-&gt;push_data(data.data(),data.size());
+		
+		c-&gt;write_message(message);
+	}
+}
+int _tmain(int argc, _TCHAR* argv[])
+{
+	try
+	{
+		std::string ip = "127.0.0.1";
+		unsigned short port = 1102;
+
+		boost::shared_ptr&lt;client&gt; c = boost::make_shared&lt;client&gt;(ip,port,5);
+		printf("connect : %s:%u\n",ip.c_str(),port);
+
+		boost::thread t(boost::bind(send_thread,c));
+
+		c-&gt;run();
+	}
+	catch(const boost::system::system_error& e)
+	{
+		printf("code:%u	%s\n",e.code().value(),e.what());
+	}
+
+	system("pause");
+	return 0;
+}
+
+
+
+<span class="care">//client</span>
+#pragma once
+#include &lt;dark-cpp/net/tcp/message_client.hpp&gt;
+class client:public dark::net::tcp_message_client
+{
+public:
+	client(std::string server,unsigned short port,std::size_t buffer_size);
+	~client(void);
+
+	virtual void closed();
+	virtual void message_readed(dark::net::message_handler_ptr_t handler);
+};
+
+#include "StdAfx.h"
+#include "client.h"
+
+
+client::client(std::string server,unsigned short port,std::size_t buffer_size)
+	:dark::net::tcp_message_client(server,port,buffer_size)
+{
+}
+
+
+client::~client(void)
+{
+}
+
+void client::closed()
+{
+	//調用基類 實現
+	tcp_message_client::closed();
+
+	puts("closed");
+}
+void client::message_readed(dark::net::message_handler_ptr_t handler)
+{
+	if(!handler-&gt;empty())
+	{
+		std::string msg;
+		do
+		{
+			std::pair&lt;char*,std::size_t&gt; data = handler-&gt;get();
+			std::string str(data.first,data.second);
+			puts(str.c_str());
+			msg += str;
+		}while(handler->next());
+		puts(msg.c_str());
+	}
+}
+</pre>
+		</p>
+	</div>
+
 </div>
 </body>
 </html>

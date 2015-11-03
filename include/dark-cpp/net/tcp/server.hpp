@@ -11,7 +11,7 @@ namespace dark
 		class tcp_server:public tcp_base_server
 		{
 		public:
-			tcp_server(const unsigned short port = 1102,std::size_t buffer_size = 10240)
+			tcp_server(unsigned short port = 1102,std::size_t buffer_size = 10240)
 				:tcp_base_server(port,buffer_size)
 			{
 			}
