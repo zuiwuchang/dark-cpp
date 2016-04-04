@@ -1,0 +1,101 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>net</title>
+<link href="../css.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="main">
+	<div class="title">
+		<a href="#pe">pe</a>
+		
+		
+	</div>
+	<div class="note"><a name="pe"></a>
+		<p><span class="flag">pe</span>
+<pre><span class="care">#include &lt;Windows.h&gt;
+#include &lt;dark-cpp/windows/pe/pe.hpp&gt;</span>
+
+對 32 位 pe文件 格式 相關 操作
+</pre>
+		</p>
+
+		<p><span class="flag">使用 方式</span>
+<pre>1	實例化 class pe
+
+2	調用 pe public方法
+</pre>
+		</p>
+
+		<p><span class="flag">public</span>
+<pre>//傳入 pe 文件 路徑 構造之
+pe(const std::string path)
+
+//如果 pe 已經成功 構造 且 確實是有效的 pe文件 返回 true
+operator bool()
+
+//返回導出表
+export_directory_ptr_t get_export_directory()
+	<span class="care">typedef boost::shared_ptr&lt;IMAGE_EXPORT_DIRECTORY&gt; export_directory_ptr_t;</span>
+
+//返回 rva 所在 節
+section_header_ptr_t find_directory_by_rva(DWORD rva)const
+
+//rva 轉 文件 偏移
+DWORD rva_to_foa(DWORD rva)const
+
+//返回 導出 函數 數組
+image_export_functions_ptr_t get_image_export_functions()
+	<span class="care">typedef struct _IMAGE_EXPORT_FUNCTION_
+	{
+		DWORD index;
+		DWORD rva;
+		DWORD offset;
+		std::string name;
+	}IMAGE_EXPORT_FUNCTION,*PIMAGE_EXPORT_FUNCTION;
+	typedef boost::shared_ptr&lt;IMAGE_EXPORT_FUNCTION&gt;  image_export_function_ptr_t;
+	typedef boost::shared_ptr&lt;std::vector&lt;image_export_function_ptr_t&gt;&gt; image_export_functions_ptr_t;
+	</span>
+
+//返回模塊 導出名稱
+std::string get_name()
+</pre>
+		</p>
+
+		<p><span class="flag">example</span>
+<pre>#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;dark-cpp\windows\pe\pe.hpp&gt;
+
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	dark::windows::pe pe("ws2_32.dll");
+	if(!pe)
+	{
+		std::cout&lt;&lt;"is not pe file\n";
+		return 0;
+	}
+	auto funcs = pe.get_image_export_functions();
+	if(!funcs)
+	{
+		std::cout&lt;&lt;"not found export functions\n";
+		return 0;
+	}
+	std::cout&lt;&lt;pe.get_name()&lt;&lt;"\n";
+	BOOST_FOREACH(dark::windows::image_export_function_ptr_t func,*funcs)
+	{
+		printf("%04X	%08X	%08X	%s\n",func-&gt;Index,func-&gt;Rva,func-&gt;Offset,func-&gt;Name.c_str());
+	
+	}
+	return 0;
+}
+</pre>
+		</p>
+	</div>
+
+</div>
+</body>
+</html>
+
