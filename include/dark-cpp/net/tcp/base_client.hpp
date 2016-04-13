@@ -53,6 +53,10 @@ namespace dark
 			{
 				ios_.run();
 			}
+			inline void stop()
+			{
+				ios_.stop();
+			}
 		protected:
 			void post_read()
 			{
