@@ -52,6 +52,9 @@ std::size_t buffer_size()const
 //開始 server 服務
 void run()
 
+//停止 server 服務 使run返回
+void stop()
+
 //向 指定socket 異步 傳輸數據 
 void write(tcp_socket_t s,const char* data,std::size_t bytes)
 </pre>

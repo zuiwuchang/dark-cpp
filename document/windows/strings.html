@@ -1,0 +1,39 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>net</title>
+<link href="../css.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="main">
+	<div class="title">
+		<a href="#utf">utf</a>
+		
+		
+	</div>
+	<div class="note"><a name="utf"></a>
+		<p><span class="flag">utf</span>
+<pre><span class="care">#include &lt;Windows.h&gt;
+#include &lt;dark-cpp/windows/strings/utf.hpp&gt;</span>
+
+windows 下 utf ansi 字符 編碼轉換
+</pre>
+		</p>
+
+		<p><span class="flag">public</span>
+<pre>//char wchar_t 轉碼
+std::wstring char_to_wchar(const std::string& str)
+std::string wchar_to_char(const std::wstring& wcs)
+
+//utf8 wchar_t 轉碼
+std::wstring to_utf16(const std::string& utf8)
+std::string to_utf8(const std::wstring& utf16)
+</pre>
+		</p>
+	</div>
+
+</div>
+</body>
+</html>
+
