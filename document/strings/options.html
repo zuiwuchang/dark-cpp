@@ -43,7 +43,14 @@ options_result_t woptions_result_t 是options_result
 		</p>
 
 		<p><span class="flag">basic_options public</span>
-<pre>//增加一個要解析的 參數
+<pre>//構造一個 解析器
+string _dec;
+basic_options(string dec = string())
+{
+	_dec = dec;
+}
+
+//增加一個要解析的 參數
 inline basic_options& operator()(const string& full_name,const string& short_name,const string& declaration,const string& value)
 inline basic_options& operator()(options_params_ptr_t ptr)
 	<span class="care">
@@ -131,6 +138,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		</p>
 		<p><span class="flag">注意</span>
 <pre>options 的 operator(...) 方法不會 驗證 要解析的 參數 是否重複
+
+write_style 不會 輸出 _dec 信息
+write 會輸出 _dec 信息
 
 options_result::has_param 使用 boost::lexical_cast 轉化參數值
 如果 不能轉化 options_result::has_param 
