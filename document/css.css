@@ -67,3 +67,7 @@ td{
 	min-width:150px;
 	vertical-align:top;
 }
+pre{
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}

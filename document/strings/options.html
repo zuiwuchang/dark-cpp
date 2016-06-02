@@ -1,0 +1,148 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>net</title>
+<link href="../css.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="main">
+	<div class="title">
+		<a href="#options">options</a>
+		
+	</div>
+	<div class="note"><a name="options"></a>
+		<p><span class="flag">options</span>
+<pre><span class="care">#include &lt;dark-cpp/strings/options.hpp&gt;</span>
+
+basic_options 提供了 將字符串作為參數 解析的 能力
+其內部使用 boost::xpressive 進行字符串 處理
+
+options_t woptions_t 是basic_options 
+分別 對std::string std::wstring 的 特化
+
+
+
+options_result 用於 接受basic_options 的分析 結果
+options_result_t woptions_result_t 是options_result 
+分別 對std::string std::wstring 的 特化
+</pre>
+		</p>
+
+		<p><span class="flag">使用 方式</span>
+<pre>1	從 實例化 options_t/woptions_t
+
+2	調用 inline basic_options& operator()(const string& full_name,const string& short_name,const string& declaration,const string& value)
+	定義要解析的 參數
+
+3	調用 void analyze(const string& str,options_result& out)
+	分析 參數
+
+4	調用 options_result::has_param 獲取 是否傳染了參數
+</pre>
+		</p>
+
+		<p><span class="flag">basic_options public</span>
+<pre>//增加一個要解析的 參數
+inline basic_options& operator()(const string& full_name,const string& short_name,const string& declaration,const string& value)
+inline basic_options& operator()(options_params_ptr_t ptr)
+	<span class="care">
+		full_name	參數全名
+		short_name	參數短名 如果沒有短名 傳入 空字符串
+		declaration	說明信息
+		value	參數默認值 如果沒有默認值 傳入 空字符串
+	</span>
+
+//使用 call定義的風格 生成 說明信息 到 ostream
+void write_style(std::basic_ostream&lt;charT&gt;&amp; ostream,boost::function&lt;void(std::basic_ostream&lt;charT&gt;&amp;,options_params_ptr_t node)&gt; call)
+//生成默認風格的 說明信息 到 ostream
+void write_style(std::basic_ostream&lt;charT&gt;&amp; ostream)
+
+//將str作為參數分析 並將分析結果 保存到out
+void analyze(const string&amp; str,options_result&amp; out)
+</pre>
+		</p>
+		<p><span class="flag">options_result public</span>
+<pre>//返回是否設置了 參數full_name
+bool has_param(const std::basic_string&lt;charT&gt;&amp; full_name)
+
+//... 如果 返回 true out將保存 參數值
+template&lt;typename Target&gt;
+bool has_param(const std::basic_string&lt;charT&gt;&amp;  full_name,Target& out)
+
+//... 參數值為字符串的 特化
+bool has_param(const std::basic_string&lt;charT&gt;&amp; full_name,std::basic_string&lt;charT&gt;&amp; out)
+</pre>
+		</p>
+
+		<p><span class="flag">example</span>
+<pre>#include &lt;dark-cpp/strings/options.hpp&gt;
+
+void mywrite(std::basic_ostream&lt;char&gt;& ostream,dark::strings::options_t::options_params_ptr_t node)
+{
+	ostream&lt;&lt;node-&gt;full_name&lt;&lt;"\n";
+}
+int _tmain(int argc, _TCHAR* argv[])
+{
+	/******	options_t	******/
+	puts("******	options_t	******");
+	std::string params = "-h  -o=\"news\" -t=test --close=\"opend\" -v=1.0 -p=1102";
+	
+	//創建 分析器
+	dark::strings::options_t opts;
+	opts("help","h","show help info","")
+		("open","o","open new database","test.db")
+		("close","","close database","test.db")
+		("version","v","show version","")
+		("port","p","connect port","")
+		;
+	//輸出 幫助 信息
+	opts.write(std::cout);
+	//自定義 幫助信息 顯示格式
+	opts.write_style(std::cout,mywrite);
+
+	//分析參數
+	dark::strings::options_result_t rs;
+	opts.analyze(params,rs);
+
+	//所有傳入 參數
+	puts("/*****	params	*****/");
+	BOOST_FOREACH(auto param,rs._params)
+	{
+		std::cout&lt;&lt;param.first&lt;&lt;"	"&lt;&lt;param.second&lt;&lt;"\n";
+	}
+	//驗證 指定參數
+	std::cout&lt;&lt;"has help	"&lt;&lt;rs.has_param("help")&lt;&lt;"\n";
+	std::cout&lt;&lt;"has test	"&lt;&lt;rs.has_param("test")&lt;&lt;"\n";
+	std::size_t port = 0;
+	if(rs.has_param&lt;std::size_t&gt;("port",port))
+	{
+		std::cout&lt;&lt;"port="&lt;&lt;port&lt;&lt;"\n";
+	}
+	std::string version;
+	if(rs.has_param("version",version))
+	{
+		std::cout&lt;&lt;"version="&lt;&lt;version&lt;&lt;"\n";
+	}
+
+	return 0;
+}
+</pre>
+		</p>
+		<p><span class="flag">注意</span>
+<pre>options 的 operator(...) 方法不會 驗證 要解析的 參數 是否重複
+
+options_result::has_param 使用 boost::lexical_cast 轉化參數值
+如果 不能轉化 options_result::has_param 
+不會拋出 boost::bad_lexical_cast 並且函數依然返回 true
+只是 不會設置 參數值罷
+</pre>
+		</p>
+	</div>
+
+	
+
+</div>
+</body>
+</html>
+

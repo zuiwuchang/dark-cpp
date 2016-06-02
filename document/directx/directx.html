@@ -1,0 +1,269 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>directx</title>
+<link href="../css.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="main">
+	<div class="title">
+		<a href="#device">device</a>
+		
+		
+	</div>
+	<div class="note"><a name="device"></a>
+		<p><span class="flag">device</span>
+<pre>封裝了對
+IDirect3DDevice9*		_device;
+的操作
+
+1	從 device 派生子類
+2	從寫 mydevice 的 虛函數
+	<span class="care">//應該重載此函數 在裡面增加 資源釋放操作 釋放資源
+	virtual void release()
+	{
+		if(_device)
+		{
+			_device->Release();
+			_device	=	NULL;
+		}
+	}
+	//應該重載此函數 在裡面增加 初始化 設備
+	//返回 false 導致 init_device 失敗
+	virtual bool init()
+	{
+		return true;
+	}
+	//應該重載此函數 以改變場景繪製 time_interval 是距離上次繪製的 時間間隔
+	virtual void draw(const DWORD time_interval) = 0;
+	//應該重載此函數 在此執行 遊戲 沒幀邏輯
+	virtual void run(const DWORD time_interval) = 0;</span>
+
+3	實例化 子類
+4	調用子類的 init_device 初始化 設備
+5	... msg_loop 進入 消息循環
+</pre>
+		</p>
+
+		<p><span class="flag">device</span>
+<pre>//返回 d3d9設備
+inline IDirect3DDevice9* device9()
+
+</pre>
+		</p>
+	<p><span class="flag">public</span>
+<pre>
+//返回 窗口 寬 高
+inline int width()
+inline int height()
+
+//返回 最高fps 設置
+inline int fps()
+
+//初始化 d3d9設備 以及關聯的 窗口
+bool init_device(HINSTANCE hInstance		//應用程序實例
+				,HICON hIcon										//圖標
+				,HICON hIconSm										//圖標
+				,WNDPROC window_fun									//窗口函數
+				,const wchar_t* title = DARK_DIRECTX_WINDOW_TITLE	//窗口標題
+				,int fps = 60
+				,int width = 640									//窗口寬
+				,int height = 480									//窗口高
+				,bool window = true									//窗口模式 而非 全屏
+				,D3DDEVTYPE device_type= D3DDEVTYPE_HAL				//使用 硬件/軟件 運算
+			)
+
+//進入消息循環
+void msg_loop()
+</pre>
+		</p>
+		<p><span class="flag">example</span>
+<pre><span class="care">mydevice.h</span>
+#pragma once
+#include &lt;dark-cpp/directx/directx.hpp&gt;
+class mydevice
+	:public dark::directx::device
+{
+public:
+	mydevice(void);
+	virtual ~mydevice(void);
+
+protected:
+	LPD3DXFONT _font;
+
+	virtual void release();
+	virtual bool init();
+	virtual void draw(const DWORD time_interval);
+	virtual void run(const DWORD time_interval);
+};
+
+
+
+
+<span class="care">mydevice.cpp</span>
+#include "StdAfx.h"
+#include "mydevice.h"
+#include &lt;boost/lexical_cast.hpp&gt;
+
+mydevice::mydevice(void)
+{
+	_font = NULL;
+}
+
+
+mydevice::~mydevice(void)
+{
+	if(_font)
+	{
+		_font->Release();
+		_font = NULL;
+	}
+}
+
+bool mydevice::init()
+{
+	//創建 文本繪製接口
+	D3DXFONT_DESC font_desc;
+	memset(&font_desc,0,sizeof(font_desc));
+	font_desc.Height	=	25;
+	font_desc.Weight	=	12;
+	font_desc.Weight	=	500;	//[0,1000]
+	font_desc.MipLevels	=	D3DX_DEFAULT;
+	font_desc.Italic	=	FALSE;
+	font_desc.CharSet	=	DEFAULT_CHARSET;
+	font_desc.OutputPrecision	=	0;
+	font_desc.Quality			=	0;
+	font_desc.PitchAndFamily	=	0;
+	wcscpy_s(font_desc.FaceName,L"宋体");
+
+	D3DXCreateFontIndirect(_device,&font_desc,&_font);
+	
+	return true;
+}
+void mydevice::release()
+{
+	dark::directx::device::release();
+}
+void mydevice::draw(const DWORD time_interval)
+{
+	//計算FPS
+	static DWORD time			=	0;
+	static DWORD frame_count	=	0;  
+	static std::wstring fps;
+
+	++frame_count;
+	time	+=	time_interval;
+	if(time >= 1000)
+	{
+
+		frame_count	*=	1000;
+		frame_count	/=	time;
+		fps	=	boost::lexical_cast&lt;std::wstring&gt;(frame_count);
+		fps			+=	L"fps";
+		time		=	0;
+		frame_count	=	0;
+
+	}
+
+	//繪製fps
+	RECT rect;
+	rect.left	=	10;
+	rect.right	=	110;
+	rect.top	=	10;
+	rect.bottom	=	50;
+	_font->DrawText(NULL
+		,fps.data()
+		,fps.size()
+		,&rect
+		,DT_TOP | DT_LEFT
+		,D3DCOLOR_XRGB(255,0,0)
+		);
+}
+	
+void mydevice::run(const DWORD time_interval)
+{
+
+}
+
+
+<span class="care">main</span>
+#include "mydevice.h"
+
+// 全局变量:
+HINSTANCE hInst;
+// 此代码模块中包含的函数的前向声明:
+LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
+
+int APIENTRY _tWinMain(HINSTANCE hInstance,
+                     HINSTANCE hPrevInstance,
+                     LPTSTR    lpCmdLine,
+                     int       nCmdShow)
+{
+	hInst = hInstance;
+
+	//創建 d3dx 窗口
+	mydevice device;
+	if(!device.init_device(hInstance,
+		LoadIcon(hInstance, MAKEINTRESOURCE(IDI_TEST_DX)),
+		LoadIcon(hInstance, MAKEINTRESOURCE(IDI_SMALL)),
+		WndProc,
+		L"d3dx測試",
+		60,
+		640,480))
+	{
+		return FALSE;
+	}
+	device.msg_loop();
+
+	return 0;
+}
+
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	int wmId, wmEvent;
+	PAINTSTRUCT ps;
+	HDC hdc;
+
+	switch (message)
+	{
+	case WM_COMMAND:
+		wmId    = LOWORD(wParam);
+		wmEvent = HIWORD(wParam);
+		// 分析菜单选择:
+		switch (wmId)
+		{
+		case IDM_ABOUT:
+			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			break;
+		case IDM_EXIT:
+			DestroyWindow(hWnd);
+			break;
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
+		break;
+	case WM_PAINT:
+		hdc = BeginPaint(hWnd, &ps);
+		// TODO: 在此添加任意绘图代码...
+		EndPaint(hWnd, &ps);
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
+	}
+	return 0;
+}
+</pre>
+		</p>
+	</div>
+
+	
+
+</div>
+</body>
+</html>
+
