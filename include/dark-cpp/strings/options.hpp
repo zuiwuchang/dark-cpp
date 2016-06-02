@@ -176,7 +176,10 @@ namespace dark
 				//ÔOÖÃ…¢”µ Ä¬ÕJÖµ
 				BOOST_FOREACH(options_t::options_params_ptr_t node,_params)
 				{
-					out._params[node->full_name] = node->value;
+					if(!node->value.empty())
+					{
+						out._params[node->full_name] = node->value;
+					}
 				}
 
 				boost::xpressive::sregex_token_iterator iterator(str.begin(),str.end(),_token,-1);
@@ -332,7 +335,10 @@ namespace dark
 				//ÔOÖÃ…¢”µ Ä¬ÕJÖµ
 				BOOST_FOREACH(woptions_t::options_params_ptr_t node,_params)
 				{
-					out._params[node->full_name] = node->value;
+					if(!node->value.empty())
+					{
+						out._params[node->full_name] = node->value;
+					}
 				}
 
 				boost::xpressive::wsregex_token_iterator iterator(str.begin(),str.end(),_token,-1);
