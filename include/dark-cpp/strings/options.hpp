@@ -102,8 +102,12 @@ namespace dark
 			typedef boost::shared_ptr<options_params<charT>> options_params_ptr_t;
 		protected:
 			std::vector<options_params_ptr_t> _params;
-		
 		public:
+			string _dec;
+			basic_options(string dec = string())
+			{
+				_dec = dec;
+			}
 			//‘O÷√ Ö¢îµ
 			inline basic_options& operator()(const string& full_name,const string& short_name,const string& declaration,const string& value)
 			{
@@ -147,6 +151,10 @@ namespace dark
 		public:
 			virtual void write(std::basic_ostream<char>& ostream)
 			{
+				if(!_dec.empty())
+				{
+					ostream<<_dec<<"\n";
+				}
 				BOOST_FOREACH(options_params_ptr_t node,_params)
 				{
 					ostream<<"--"<<node->full_name;
@@ -306,6 +314,10 @@ namespace dark
 			}
 			virtual void write(std::basic_ostream<wchar_t>& ostream)
 			{
+				if(!_dec.empty())
+				{
+					ostream<<_dec<<L"\n";
+				}
 				BOOST_FOREACH(options_params_ptr_t node,_params)
 				{
 					ostream<<L"--"<<node->full_name;
