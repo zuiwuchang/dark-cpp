@@ -1,0 +1,61 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>net</title>
+<link href="../css.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="main">
+	<div class="title">
+		<a href="#autocomplete">autocomplete</a>
+		
+	</div>
+	<div class="note"><a name="autocomplete"></a>
+		<p><span class="flag">autocomplete</span>
+<pre><span class="care">#include &lt;dark-cpp/strings/autocomplete.hpp&gt;</span>
+
+autocomplete_t/wautocomplete_t 提供了 根據傳入命令 返回 完整 可選命令的 功能
+</pre>
+		</p>
+
+		<p><span class="flag">使用 方式</span>
+<pre>1	實例化 autocomplete_t/wautocomplete_t
+
+2	調用 void get_cmds(const std::wstring&amp; cmd,const std::vector&lt;std::wstring&gt;&amp; cmds,std::vector&lt;std::wstring&gt;&amp; outs,bool icase = false)			
+	
+
+3	從 outs 中 獲取 匹配的 命令
+</pre>
+		</p>
+
+		<p><span class="flag">example</span>
+<pre>#include &lt;dark-cpp/strings/autocomplete.hpp&gt;
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	dark::strings::autocomplete_t autocomplete;
+	std::vector&lt;std::string&gt; cmds;
+	cmds.push_back("Create table");
+	cmds.push_back("create index");
+
+	std::string cmd = "create";
+	std::vector&lt;std::string&gt; outs;
+	autocomplete.get_cmds(cmd,cmds,outs,true);
+
+	for(std::size_t i=0;i&lt;outs.size();++i)
+	{
+		std::cout&lt;&lt;outs[i]&lt;&lt;"\n";
+	}
+	return 0;
+}
+</pre>
+		</p>
+	</div>
+
+	
+
+</div>
+</body>
+</html>
+
