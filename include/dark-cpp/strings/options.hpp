@@ -142,7 +142,8 @@ namespace dark
 			boost::xpressive::sregex _flag_end;
 
 		public:
-			options_t()
+			options_t(const std::string& dec)
+				:basic_options(dec)
 			{
 				_token = boost::xpressive::_s;
 				_flag_begin = boost::xpressive::sregex::compile("^-{1,2}[a-zA-Z]+=\".+");
@@ -306,7 +307,8 @@ namespace dark
 			boost::xpressive::wsregex _flag_begin;
 			boost::xpressive::wsregex _flag_end;
 		public:
-			woptions_t()
+			woptions_t(const std::wstring& dec)
+				:basic_options(dec)
 			{
 				_token = boost::xpressive::_s;
 				_flag_begin = boost::xpressive::wsregex::compile(L"^-{1,2}[a-zA-Z]+=\".+");
