@@ -96,6 +96,13 @@ namespace dark
 				{
 					--_n;
 				}
+				inline void operator +=(int n)
+				{
+					if(n != 0)
+					{
+						modify(n);
+					}
+				}
 				//n==0 set pop 0 n>0 pop+ n<0 pop- 
 				inline void modify(int n)
 				{

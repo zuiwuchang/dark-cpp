@@ -1,0 +1,148 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>net</title>
+<link href="../css.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="main">
+	<div class="title">
+		<a href="#hook">hook</a>
+		
+		
+	</div>
+	<div class="note"><a name="hook"></a>
+		<p><span class="flag">hook</span>
+<pre><span class="care">#include &lt;Windows.h&gt;
+#include &lt;dark-cpp/windows/strings/hook.hpp&gt;</span>
+
+hook 代碼相關
+
+hook_code_t 記錄了hook信息 以便恢復原代碼
+
+class hook 的static 方法
+inline_hook 實現了 inline hook 功能
+</pre>
+		</p>
+
+		<p><span class="flag">hook_code_ptr_t</span>
+<pre>class hook_code_t
+{
+public:
+	//hook 位置
+	DWORD address;
+
+	//新函數 jmp 到原函數位置
+	DWORD jump;
+
+	//原函數被替換字節長度
+	DWORD size;
+
+	//原函數被替換代碼
+	boost::shared_array&lt;BYTE&gt; code;
+
+	...
+};
+typedef boost::shared_ptr&lt;hook_code_t&gt; hook_code_ptr_t;
+</pre>
+		</p>
+
+		<p><span class="flag">hook</span>
+<pre>//將address 代碼 修改為 code
+inline static hook_code_ptr_t inline_hook(const DWORD address,		//被hook位置
+	const BYTE* code,	//hook 代碼
+	DWORD size	//hook代碼長度
+);
+static hook_code_ptr_t inline_hook(const PVOID address,		//被hook位置
+	const BYTE* code,	//hook 代碼
+	DWORD size	//hook代碼長度
+);
+
+
+//hook address jump到 myaddress
+inline static hook_code_ptr_t inline_hook(const DWORD address,		//被hook位置
+	const DWORD myaddress,	//自定義函數 位置
+	DWORD size				//hook代碼長度
+)
+static hook_code_ptr_t inline_hook(const PVOID address,		//被hook位置
+	const PVOID myaddress,	///自定義函數 位置
+	DWORD size				//hook代碼長度
+)
+
+//恢復被 hook的 原代碼
+static bool un_inline_hook(hook_code_ptr_t code_ptr)
+</pre>
+		</p>
+		<p><span class="flag">example</span>
+<pre>DWORD g_hook_hate_jump = 0;
+void singleton_hook::hook()
+{
+	dark::windows::hacker::hook_code_ptr_t hook;
+	{
+		//hook 技能
+		BYTE code[] = {0x90,0x90,0x90,0x90,0x90,0x90};
+		DWORD size = sizeof(code);
+		DWORD addr = 0x005F1A66;
+		hook = dark::windows::hacker::hook::inline_hook(addr,code,size);
+		if(hook)
+		{
+			_hooks.push_back(hook);
+		}
+		addr = 0x005F1A7A;
+		hook = dark::windows::hacker::hook::inline_hook(addr,code,size);
+		if(hook)
+		{
+			_hooks.push_back(hook);
+		}
+	}
+
+	{
+		//hook 仇恨系統
+		DWORD addr = 0x00507A12;
+		DWORD my_addr = (DWORD)hook_hate;
+		printf("%08X	%08X\n",addr,my_addr);
+		DWORD size = 9;
+		hook = dark::windows::hacker::hook::inline_hook(addr,my_addr,size);
+		if(hook)
+		{
+			g_hook_hate_jump = hook->jump;
+			_hooks.push_back(hook);
+		}
+	}
+}
+	
+void singleton_hook::unhook()
+{
+	BOOST_FOREACH(auto hook,_hooks)
+	{
+		dark::windows::hacker::hook::un_inline_hook(hook);
+	}
+	_hooks.clear();
+}
+
+__declspec(naked)
+void __stdcall hook_hate()
+{
+	__asm
+	{
+		pushfd;
+		pushad;
+		//...
+		popad;
+		popfd;
+
+		mov     eax, dword ptr [esi+0x10];
+		mov     dword ptr [ebx+0xA0], eax;
+
+		jmp g_hook_hate_jump;
+	}
+}
+</pre>
+		</p>
+	</div>
+
+</div>
+</body>
+</html>
+

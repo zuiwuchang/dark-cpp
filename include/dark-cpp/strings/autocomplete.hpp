@@ -4,6 +4,7 @@
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/foreach.hpp>
 #include <boost/array.hpp>
+#include <boost/function.hpp>
 
 #include <vector>
 #include <string>
@@ -65,6 +66,31 @@ namespace dark
 					if(boost::xpressive::regex_match(str,reg))
 					{
 						outs.push_back(str);
+					}
+				}
+			}
+			void get_cmds(const std::string& cmd,const std::vector<std::string>& cmds,boost::function<bool(const std::string&)> call,bool icase = false)
+			{
+				std::string reg_str;
+				replace_flags(cmd,reg_str);
+				reg_str = "^" + reg_str + ".*";
+				boost::xpressive::sregex reg;
+				if(icase)
+				{
+					reg = boost::xpressive::sregex::compile(reg_str,boost::xpressive::icase);
+				}
+				else
+				{
+					reg = boost::xpressive::sregex::compile(reg_str);
+				}
+				BOOST_FOREACH(const std::string& str,cmds)
+				{
+					if(boost::xpressive::regex_match(str,reg))
+					{
+						if(call(str))
+						{
+							break;
+						}
 					}
 				}
 			}
