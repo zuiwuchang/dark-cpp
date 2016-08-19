@@ -1,0 +1,157 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>bytes</title>
+<link href="../css.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="main">
+	<div class="title">
+		<a href="#buffer_t">buffer_t</a>
+		
+	</div>
+	<div class="note"><a name="buffer_t"></a>
+		<p><span class="flag">buffer_t</span>
+<pre><span class="care">#include &lt;dark-cpp/bytes/buffer.hpp&gt;</span>
+<span class="care">namespace dark::bytes</span>
+
+
+buffer_t 是一個仿造 golang bytes.Buffer 的 byte 數據流 輸入輸出 緩衝區
+<span class="care">typedef boost::shared_ptr&lt;buffer_t&gt; buffer_spt;</span>
+</pre>
+		</p>
+
+		<p><span class="flag">使用 方式</span>
+<pre>1	實例化 buffer_t
+
+2	調用 write 寫入 數據流
+	
+
+3	調用 read 讀取 數據流
+</pre>
+		</p>
+
+		<p><span class="flag">public</span>
+<pre>//構造 
+buffer_t(int capacity = 1024/*分塊長度*/,bool sync = false)
+
+//清空緩存 刪除所有待讀數據
+inline void reset()
+
+//返回 流中 待讀字節數
+std::size_t size()
+
+//將緩衝區 copy 到指定內存 返回實際 copy數據長
+//被copy的數據 不會從 緩衝區中 刪除
+//如果 n &gt; 緩衝區 數據 將 只copy 緩衝區 否則 copy n 字節數據
+std::size_t copy_to(char* bytes,std::size_t n)
+
+//... 跳過 skip 個字節 進行 copy
+std::size_t copy_to(std::size_t skip,char* bytes,std::size_t n)
+
+//寫入數據流到 緩衝區 返回實際寫入量
+std::size_t write(const char* bytes,std::size_t n)
+
+//從 緩衝區 讀取數據流 返回實際讀取量
+//緩衝區為空 返回 0
+std::size_t read(char* bytes,std::size_t n)
+</pre>
+		</p>
+		<p><span class="flag">example</span>
+<pre>#include &lt;dark-cpp/bytes/buffer.hpp&gt;
+
+#include &lt;gtest/gtest.h&gt;
+#include &lt;boost/smart_ptr.hpp&gt;
+
+#ifdef _DEBUG
+#pragma comment(lib,"gtest-mdd.lib")
+#else
+#pragma comment(lib,"gtest-md.lib")
+#endif
+
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	testing::InitGoogleTest(&argc, argv);
+	int rs = RUN_ALL_TESTS();
+	
+	std::system("pause");
+	return rs;
+}
+
+
+TEST(BytesBufferTest, HandleNoneZeroInput)
+{
+	{
+		//實例化 對象
+		dark::bytes::buffer_t buf(8);
+		std::string str = "0123456789";
+		//寫入數據
+		EXPECT_EQ(buf.write(str.data(),str.size()),str.size());
+		//獲取 可讀數據 大小
+		EXPECT_EQ(buf.size(),str.size());
+
+		char bytes[11] = {0};
+		//copy 可讀 緩衝區
+		EXPECT_EQ(buf.copy_to(0,bytes,10),str.size());
+		EXPECT_STREQ(bytes,str.c_str());
+
+		memset(bytes,0,sizeof(bytes));
+		int offset = 0;
+		int len = 10;
+		while (true)
+		{
+			int need = 3;
+			if (need &gt; len)
+			{
+				need = len;
+			}
+
+			//讀取 緩衝區
+			int n = buf.read(bytes + offset, need);
+			if (!n)
+			{
+				//無 數據 可讀 
+				EXPECT_STREQ(bytes,str.c_str());
+				break;
+			}
+			offset += n;
+			len -= n;
+		}
+
+		EXPECT_EQ(buf.size(),0);
+	}
+	{
+		
+		dark::bytes::buffer_t buf(8);
+		std::string str = "0123456789abcdefghijklmnopqrstwxz";
+		EXPECT_EQ(buf.write(str.data(),str.size()),str.size());
+
+		std::size_t size = str.size();
+		boost::shared_array&lt;char&gt; b(new char[size]);
+		std::size_t n = buf.copy_to(b.get(),size);
+		EXPECT_EQ(std::string(b.get(),n),str);
+
+		std::size_t pos = 3;
+		//跳過字節 copy
+		n = buf.copy_to(pos,b.get(),size);
+		EXPECT_EQ(std::string(b.get(),n),str.substr(pos));
+	}
+}
+</pre>
+		</p>
+		<p><span class="flag">注意</span>
+<pre>buffer_t  派生自 boost::noncopyable 故不可被 copy
+
+
+</pre>
+		</p>
+	</div>
+
+	
+
+</div>
+</body>
+</html>
+
