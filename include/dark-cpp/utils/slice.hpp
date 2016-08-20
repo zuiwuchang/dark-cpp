@@ -45,7 +45,7 @@ namespace dark
 			}
 			inline operator bool()
 			{
-				return _size;
+				return _size != 0;
 			}
 		};
 		

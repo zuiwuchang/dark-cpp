@@ -1,0 +1,208 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>bytes</title>
+<link href="../../css.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="main">
+	<div class="title">
+		<a href="#message_t">message_t</a>
+		<a href="#writer_t">writer_t</a>
+		<a href="#reader_t">reader_t</a>
+		
+	</div>
+	<div class="note"><a name="message_t"></a>
+		<p><span class="flag">message_t</span>
+<pre><span class="care">#include &lt;dark-cpp/io/msg/message.hpp&gt;</span>
+<span class="care">namespace dark::io::msg</span>
+
+message_t 是一個 帶消息 邊界的 的二進制消息
+存在 header body
+
+struct header_t
+{
+	std::size_t flag;
+	std::size_t id;
+	std::size_t size;
+	header_t():flag(0),id(0),size(0)
+	{
+	}
+};
+
+typedef dark::utils::slice_t&lt;char&gt; body_t;
+typedef dark::utils::array_sapt&lt;char&gt; data_t;
+</pre>
+		</p>
+
+		<p><span class="flag">public</span>
+<pre>//構造 空 消息
+message_t()
+//以 二進制 數據 構造
+message_t(data_t data)
+
+//返回 消息 是否為空
+inline operator bool()const
+
+//返回 header 指針
+inline header_t* header()const
+
+//返回 body 數據
+inline body_t body()const
+
+//返回 二進制 數據
+inline data_t data()const
+</pre>
+		</p>
+		<p><span class="flag">注意</span>
+<pre>message_t 內部 使用 引用計數 copy 語義 不會 創建 副本
+而是 創建一個 有相同引用的 對象  
+</pre>
+		</p>
+	</div>
+
+	<div class="note"><a name="writer_t"></a>
+		<p><span class="flag">writer_t</span>
+<pre><span class="care">#include &lt;dark-cpp/io/msg/writer.hpp&gt;</span>
+<span class="care">namespace dark::io::msg</span>
+
+writer_t 是一個 message_t 生成器 將 數據流 保證成 message_t
+</pre>
+		</p>
+		<p><span class="flag">public</span>
+<pre>//構造
+writer_t(int capacity = 1024,bool sync = false)
+
+//清空緩存 刪除所有待讀數據
+inline void reset()
+
+//寫入 數據
+inline std::size_t write(const dark::utils::slice_t&lt;char&gt;&amp; slice)
+inline std::size_t write(const std::string&amp; str)
+std::size_t write(const char* bytes,std::size_t n)
+
+//將 緩衝區的 數據 保證為 message_t
+message_t create_message(std::size_t id)
+</pre>
+		</p>
+		<p><span class="flag">example</span>
+<pre>TEST(IoMsgMessageWriterTest, HandleNoneZeroInput)
+{
+	dark::io::msg::writer_t writer(10);
+	{
+		std::size_t id = 1;
+		std::string str1 = "this is msg test";
+		std::string str2 = "Cerberus it's an idea";
+		EXPECT_EQ(str1.size(),writer.write(str1));
+		EXPECT_EQ(str2.size(),writer.write(str2));
+	
+		dark::io::msg::message_t msg = writer.create_message(id);
+		EXPECT_FALSE(writer.create_message(id).body());
+
+		dark::io::msg::header_t* header = msg.header();
+		EXPECT_EQ(header-&gt;flag,DARK_IO_MSG_HEADER_FLAG);
+		EXPECT_EQ(header-&gt;id,id);
+		EXPECT_EQ(header-&gt;size,str1.size() + str2.size());
+
+		dark::io::msg::body_t body = msg.body();
+		EXPECT_TRUE(body);
+		EXPECT_EQ(body.size(),str1.size() + str2.size());
+		EXPECT_EQ(std::string(body.get(),body.size()),str1 + str2);
+	}
+	
+	{
+		std::size_t id = 2;
+		std::string str1 = "i love kate beckinsale";
+		EXPECT_EQ(str1.size(),writer.write(str1));
+	
+		dark::io::msg::message_t msg = writer.create_message(id);
+		EXPECT_FALSE(writer.create_message(id).body());
+
+		dark::io::msg::header_t* header = msg.header();
+		EXPECT_EQ(header-&gt;flag,DARK_IO_MSG_HEADER_FLAG);
+		EXPECT_EQ(header-&gt;id,id);
+		EXPECT_EQ(header-&gt;size,str1.size());
+
+		dark::io::msg::body_t body = msg.body();
+		EXPECT_TRUE(body);
+		EXPECT_EQ(body.size(),str1.size());
+		EXPECT_EQ(std::string(body.get(),body.size()),str1);
+	}
+
+}
+</pre>
+		</p>
+		<p><span class="flag">注意</span>
+<pre>writer_t 內部 使用 引用計數 copy 語義 不會 創建 副本
+而是 創建一個 有相同引用的 對象
+</pre>
+		</p>
+	</div>
+
+	<div class="note"><a name="reader_t"></a>
+		<p><span class="flag">reader_t</span>
+<pre><span class="care">#include &lt;dark-cpp/io/msg/reader.hpp&gt;</span>
+<span class="care">namespace dark::io::msg</span>
+
+reader_t 是一個 message_t 的解析器 將 數據流 解析為 message_t
+</pre>
+		</p>
+		<p><span class="flag">public</span>
+<pre>//構造
+reader_t(int capacity = 1024,bool sync = false)
+
+//清空緩存 刪除所有待讀數據
+inline void reset()
+
+//寫入 數據
+inline std::size_t write(const dark::utils::slice_t&lt;char&lt;&amp; slice)
+std::size_t write(const char* bytes,std::size_t n)
+
+//返回 message_t 如果 流中 不存在消息 返回空的 message_t
+message_t get_message()
+</pre>
+		</p>
+		<p><span class="flag">example</span>
+<pre>TEST(IoMsgMessageReaderTest, HandleNoneZeroInput)
+{
+	dark::io::msg::writer_t writer;
+	std::string str1 = "kate beckinsale is so sexy\n";
+	std::string str2 = "i love her\n";
+	writer.write(str1);
+	writer.write(str2);
+	std::size_t id = 1;
+	dark::io::msg::message_t msg = writer.create_message(id);
+	dark::io::msg::data_t data = msg.data();
+	EXPECT_EQ(data.size(),str1.size() + str2.size() + sizeof(dark::io::msg::header_t));
+
+	dark::io::msg::reader_t reader;
+	reader.write(data,data.size());
+	dark::io::msg::message_t msg0 = reader.get_message();
+	EXPECT_TRUE(msg0);
+	dark::io::msg::message_t msg1 = reader.get_message();
+	EXPECT_FALSE(msg1);
+
+	dark::io::msg::header_t* header = msg0.header();
+	EXPECT_EQ(header-&gt;flag,DARK_IO_MSG_HEADER_FLAG);
+	EXPECT_EQ(header-&gt;id,id);
+	EXPECT_EQ(header-&gt;size,str1.size() + str2.size());
+
+	dark::io::msg::body_t body = msg0.body();
+	EXPECT_TRUE(body);
+	EXPECT_EQ(body.size(),str1.size() + str2.size());
+	EXPECT_EQ(std::string(body.get(),body.size()),str1 + str2);
+}
+</pre>
+		</p>
+		<p><span class="flag">注意</span>
+<pre>reader_t 內部 使用 引用計數 copy 語義 不會 創建 副本
+而是 創建一個 有相同引用的 對象
+</pre>
+		</p>
+	</div>
+
+</div>
+</body>
+</html>
+
