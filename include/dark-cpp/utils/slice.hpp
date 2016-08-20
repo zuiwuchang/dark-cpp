@@ -13,9 +13,21 @@ namespace dark
 			std::size_t _size;
 
 		public:
+			slice_t()
+			{
+				_ptr = NULL;
+				_size = 0;
+			}
 			slice_t(T* ptr,std::size_t size)
 			{
-				_ptr = ptr;
+				if(size)
+				{
+					_ptr = ptr;
+				}
+				else
+				{
+					_ptr = NULL;
+				}
 				_size = size;
 			}
 
@@ -28,6 +40,10 @@ namespace dark
 				return _ptr;
 			}
 			inline std::size_t size()const
+			{
+				return _size;
+			}
+			inline operator bool()
 			{
 				return _size;
 			}

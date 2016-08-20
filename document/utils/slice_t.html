@@ -9,7 +9,6 @@
 <div class="main">
 	<div class="title">
 		<a href="#slice_t">slice_t</a>
-		<a href="#slice_t">slice_t</a>
 		
 	</div>
 	<div class="note"><a name="slice_t"></a>
@@ -29,6 +28,9 @@ slice_t 模板類 是 對數組 指針 和 數組 長度 的 簡寫方式
 template&lt;typename T&gt;
 class slice_t
 
+//構造 空 slice
+slice_t()
+
 //構造 記錄數組 地址 長度
 slice_t(T* ptr,std::size_t size)
 
@@ -38,6 +40,9 @@ inline T* get()const
 
 //返回數組 長度
 inline std::size_t size()const
+
+//返回 slice 是否為空
+inline operator bool()
 </pre>
 		</p>
 		<p><span class="flag">example</span>
