@@ -1,0 +1,92 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>bytes</title>
+<link href="../css.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="main">
+	<div class="title">
+		<a href="#slice_t">slice_t</a>
+		<a href="#slice_t">slice_t</a>
+		
+	</div>
+	<div class="note"><a name="slice_t"></a>
+		<p><span class="flag">slice_t</span>
+<pre><span class="care">#include &lt;dark-cpp/utils/slice.hpp&gt;</span>
+<span class="care">namespace dark::utils</span>
+
+
+slice_t 模板類 是 對數組 指針 和 數組 長度 的 簡寫方式
+(將 兩個 數據 記錄到一個 class 中 
+以 slice_t 替代 T*,int 罷了)
+</pre>
+		</p>
+
+		<p><span class="flag">public</span>
+<pre>//指定 數組 元素 型別
+template&lt;typename T&gt;
+class slice_t
+
+//構造 記錄數組 地址 長度
+slice_t(T* ptr,std::size_t size)
+
+//返回數組 地址
+inline operator T*()const
+inline T* get()const
+
+//返回數組 長度
+inline std::size_t size()const
+</pre>
+		</p>
+		<p><span class="flag">example</span>
+<pre>#include "../../../../include/dark-cpp/utils/slice.hpp"
+
+#include &lt;gtest/gtest.h&gt;
+#include &lt;boost/smart_ptr.hpp&gt;
+
+#ifdef _DEBUG
+#pragma comment(lib,"gtest-mdd.lib")
+#else
+#pragma comment(lib,"gtest-md.lib")
+#endif
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	testing::InitGoogleTest(&argc, argv);
+	int rs = RUN_ALL_TESTS();
+
+
+	std::system("pause");
+	return rs;
+}
+
+TEST(UtilsSliceTest, HandleNoneZeroInput)
+{
+	int x[] = {1,2,3};
+	dark::utils::slice_t&lt;int&gt; slice(x,3);
+	EXPECT_EQ(slice.size(),3);
+
+	for(int i=0;i&lt;3;++i)
+	{
+		EXPECT_EQ(slice[i],x[i]);
+	}
+	slice[0] = 666;
+	EXPECT_EQ(666,x[0]);
+}
+</pre>
+		</p>
+		<p><span class="flag">注意</span>
+<pre>slice_t  只是 一個 指向 數組 指針 和 數組長度 的 簡寫方式
+slice_t 不會 主動 生成 數組
+</pre>
+		</p>
+	</div>
+
+	
+
+</div>
+</body>
+</html>
+
