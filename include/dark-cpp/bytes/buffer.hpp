@@ -5,6 +5,7 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/foreach.hpp>
+#include <boost/function.hpp>
 
 #include <list>
 
@@ -12,123 +13,121 @@ namespace dark
 {
 	namespace bytes
 	{
-		/*
-		class buffer_exception
-			: public std::exception
+		typedef boost::shared_array<char> bytes_t;
+
+		typedef boost::function<bytes_t(int)> create_bytes_t_bf_t;
+		//一塊連續的 內存 
+		//好吧 就是對一個 char 數組的 封裝罷了
+		class fragmentation_t
 		{
 		public:
-			buffer_exception()
+			 static bytes_t create_bytes_t(int capacity)
+			 {
+				 return boost::shared_array<char>(new char[capacity]);
+			 }
+		protected:
+			//分片數據
+			boost::shared_array<char> _data;
+			//分片容量
+			std::size_t _capacity;
+			//有效數據 偏移
+			std::size_t _offset;
+			//有效數據 大小
+			std::size_t _size;
+		public:
+			fragmentation_t(int capacity,create_bytes_t_bf_t create_bytes_t_f = create_bytes_t)
 			{
+				_capacity = capacity;
+				_data = create_bytes_t_f(capacity);
+
+				_offset = _size = 0;
 			}
-			buffer_exception(const char* const& str)
-				:exception(str)
+
+			std::size_t size() const
 			{
+				return _size;
 			}
-			buffer_exception(const char* const& str,int n)
-				:exception(str,n)
+			
+			//返回 空閒 容量
+			std::size_t get_free()
 			{
+				return _capacity - _offset - _size;
+			}
+			//寫入數據 返回實際寫入量
+			std::size_t write(const char* bytes,std::size_t n)
+			{
+				std::size_t free = get_free();
+				std::size_t need = n;
+				if(need > free)
+				{
+					need = free;
+				}
+				memcpy(_data.get() + _offset + _size,bytes,need);
+				_size += need;
+
+				return need;
+			}
+			//讀取 數據 返回實際讀取 量
+			//被讀取的 數據 將被 移除 緩衝區
+			std::size_t read(char* bytes,std::size_t n)
+			{
+				std::size_t need = n;
+				if(need > _size)
+				{
+					need = _size;
+				}
+
+				memcpy(bytes,_data.get() + _offset,need);
+				_size -= need;
+				_offset += need;
+
+				return need;
+			}
+
+			//只 copy 數據 不 刪除緩衝區
+			std::size_t copy_to(char* bytes,std::size_t n)
+			{
+				std::size_t need = n;
+				if (n > _size)
+				{
+					need = _size;
+				}
+				memcpy(bytes,_data.get() + _offset,need);
+
+				return need;
+			}
+			//跳過n字節 copy
+			std::size_t copy_to(std::size_t skip,char* bytes,std::size_t n)
+			{
+				if(skip >= _size)
+				{
+					return 0;
+				}
+				std::size_t offset = _offset + skip;
+				std::size_t size = _size - skip;
+
+				std::size_t need = n;
+				if (need > size)
+				{
+					need = size;
+				}
+				memcpy(bytes,_data.get() + offset,need);
+
+				return need;
 			}
 		};
-		*/
-
+		typedef boost::shared_ptr<fragmentation_t> fragmentation_spt; 
+		typedef boost::function<fragmentation_spt(int)> create_fragmentation_spt_bf_t;
 		//一個類似 golang bytes.Buffer 的 io 緩衝區
 		class buffer_t
 			: boost::noncopyable
 		{
-		protected:
-			class fragmentation_t
+		public:
+			static fragmentation_spt create_fragmentation_spt(int capacity)
 			{
-			protected:
-				//分片數據
-				boost::shared_array<char> _data;
-				//分片容量
-				std::size_t _capacity;
-				//有效數據 偏移
-				std::size_t _offset;
-				//有效數據 大小
-				std::size_t _size;
-			public:
-				std::size_t size() const
-				{
-					return _size;
-				}
-				fragmentation_t(int capacity)
-				{
-					_capacity = capacity;
-					_data = boost::shared_array<char>(new char[capacity]);
-
-					_offset = _size = 0;
-				}
-				//返回 空閒 容量
-				std::size_t get_free()
-				{
-					return _capacity - _offset - _size;
-				}
-				//寫入數據 返回實際寫入量
-				std::size_t write(const char* bytes,std::size_t n)
-				{
-					std::size_t free = get_free();
-					std::size_t need = n;
-					if(need > free)
-					{
-						need = free;
-					}
-					memcpy(_data.get() + _offset + _size,bytes,need);
-					_size += need;
-
-					return need;
-				}
-				//讀取 數據 返回實際讀取 量
-				//被讀取的 數據 將被 移除 緩衝區
-				std::size_t read(char* bytes,std::size_t n)
-				{
-					std::size_t need = n;
-					if(need > _size)
-					{
-						need = _size;
-					}
-
-					memcpy(bytes,_data.get() + _offset,need);
-					_size -= need;
-					_offset += need;
-
-					return need;
-				}
-
-				//只 copy 數據 不 刪除緩衝區
-				std::size_t copy_to(char* bytes,std::size_t n)
-				{
-					std::size_t need = n;
-					if (n > _size)
-					{
-						need = _size;
-					}
-					memcpy(bytes,_data.get() + _offset,need);
-
-					return need;
-				}
-				//跳過n字節 copy
-				std::size_t copy_to(std::size_t skip,char* bytes,std::size_t n)
-				{
-					if(skip >= _size)
-					{
-						return 0;
-					}
-					std::size_t offset = _offset + skip;
-					std::size_t size = _size - skip;
-
-					std::size_t need = n;
-					if (need > size)
-					{
-						need = size;
-					}
-					memcpy(bytes,_data.get() + offset,need);
-
-					return need;
-				}
-			};
-			typedef boost::shared_ptr<fragmentation_t> fragmentation_spt;
-
+				return boost::make_shared<fragmentation_t>(capacity);
+			}
+		protected:
 			//分片 大小
 			int _capacity;
 			//是否 啟用 線程 同步
@@ -136,9 +135,11 @@ namespace dark
 			//分片 緩存
 			std::list<fragmentation_spt> _fragmentations;
 
+			create_fragmentation_spt_bf_t _create_fragmentation_spt_f;
 		public:
-			buffer_t(int capacity = 1024/*分塊長度*/,bool sync = false)
+			buffer_t(int capacity = 1024/*分塊長度*/,create_fragmentation_spt_bf_t create_fragmentation_spt_f=create_fragmentation_spt,bool sync = false)
 			{
+				_create_fragmentation_spt_f = create_fragmentation_spt_f;
 				_capacity = capacity;
 				if(sync)
 				{
@@ -277,7 +278,7 @@ namespace dark
 						return fragmentation;
 					}
 				}
-				fragmentation_spt fragmentation = boost::make_shared<fragmentation_t>(_capacity);
+				fragmentation_spt fragmentation = _create_fragmentation_spt_f(_capacity);
 				_fragmentations.push_back(fragmentation);
 				return fragmentation;
 			}
