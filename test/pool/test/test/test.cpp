@@ -25,6 +25,30 @@ int _tmain(int argc, _TCHAR* argv[])
 	return rs;
 }
 
+//new delete test
+TEST(UnPoolTest, HandleNoneZeroInput)
+{
+	int count = 10;
+	int need = 10000;
+	std::list<char*> list;
+	for(int i=0;i<count;++i)
+	{
+		for(int j=0;j<need;++j)
+		{
+			char* p = new char[1024];
+			EXPECT_TRUE(p);
+			list.push_back(p);
+		}
+
+		BOOST_FOREACH(char* p,list)
+		{
+			delete p;
+		}
+		list.clear();
+	}
+}
+
+//test pool_chunk
 TEST(PoolPoolTest, HandleNoneZeroInput)
 {
 	dark::pool::pool_chunk pool(1024,boost::make_shared<boost::mutex>());
@@ -62,6 +86,7 @@ class Animal
 {
 public:
 	std::string name;
+	char buf[1024];
 	Animal(const std::string& name)
 	{
 		this->name = name;
@@ -71,6 +96,7 @@ public:
 
 	}
 };
+//test pool_object
 TEST(PoolPoolObjectTest, HandleNoneZeroInput)
 {
 	dark::pool::pool_object<Animal> pool(boost::make_shared<boost::mutex>());
