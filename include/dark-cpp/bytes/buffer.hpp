@@ -150,6 +150,12 @@ namespace dark
 			//清空緩存 刪除所有待讀數據
 			inline void reset()
 			{
+				if(_mutex)
+				{
+					boost::mutex::scoped_lock lock(*_mutex);
+					_fragmentations.clear();
+					return;
+				}
 				_fragmentations.clear();
 			}
 			//返回 流中 待讀字節數
