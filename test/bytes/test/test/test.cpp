@@ -70,10 +70,6 @@ TEST(BytesBufferTest, HandleNoneZeroInput)
 		while (true)
 		{
 			int need = 3;
-			if (need > len)
-			{
-				need = len;
-			}
 
 			//×xÈ¡ ¾Ğn…^
 			int n = buf.read(bytes + offset, need);

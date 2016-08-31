@@ -306,6 +306,10 @@ namespace dark
 				while(n)
 				{
 					fragmentation_spt fragmentation = get_read_fragmentation();
+					if(!fragmentation)
+					{
+						break;
+					}
 					std::size_t count = fragmentation->read(bytes,n);
 					n -= count;
 					bytes += count;
