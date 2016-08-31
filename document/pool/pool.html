@@ -1,0 +1,183 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>net</title>
+<link href="../css.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="main">
+	<div class="title">
+		<a href="#pool_chunk">pool_chunk</a>
+		<a href="#pool_object">pool_object</a>
+		
+	</div>
+
+	<div class="note"><a name="pool_chunk"></a>
+		<p><span class="flag">pool_chunk</span>
+<pre><span class="care">#include &lt;dark-cpp/pool/pool_chunk.hpp&gt;
+namespace dark::pool</span>
+
+pool_chunk 是孤 實現的 一個 內存池 
+只可以從 內存池中 申請 固定大小的 資源 chunk
+pool_chunk 不可 申請 數組
+
+pool_chunk 是為 快速 申請釋放 大數據塊 設計 其使用 hashset deque 為每塊 chunk 標記
+對於每塊 chunk 將 多佔用 10～20字節 內存
+故對於 小塊 資源 使用 pool_chunk 可能會 佔用 過多內存
+</pre>
+		</p>
+
+		<p><span class="flag">使用 方式</span>
+<pre>1	實例化 pool_chunk
+2	調用 pool_chunk::malloc_chunk 申請內存
+3	調用 pool_chunk::free_chunk 釋放內存
+4	可選的調用 pool_chunk::release_memory 將內存池中未使用內存 交還給os
+</pre>
+		</p>
+
+		<p><span class="flag">public</span>
+<pre>//構造 內存池 每次 malloc_chunk 申請 chunk_size 內存
+//mutex 是否啟用 多線程 同步
+pool_chunk(std::size_t chunk_size,dark::thread::mutex_spt mutex = dark::thread::mutex_spt())
+
+//返回 內存池中 空閒內存
+inline std::size_t get_frees()
+
+//返回 內存池中 使用的 內存
+inline std::size_t get_mallocs()
+
+//從內存池中 申請 chunk
+inline void * malloc_chunk()
+
+//歸還 chunk 到內存池
+inline void free_chunk(element_type * chunk)
+
+//將 未使用 內存 還給 os
+void release_memory()
+//同上 但 保存 n個 chunk 在池中
+void release_memory(std::size_t n)
+
+//將所有 內存 還給 os 
+//析構時  被 自動調用
+void purge_memory()
+
+//返回 指針 是否 來自內存池
+inline bool is_from(element_type *chunk)
+</pre>
+		</p>
+
+		<p><span class="flag">example</span>
+<pre>#include &lt;dark-cpp/pool/pool_chunk.hpp&gt;
+
+TEST(PoolPoolTest, HandleNoneZeroInput)
+{
+	dark::pool::pool_chunk pool(1024,boost::make_shared&lt;boost::mutex&gt;());
+	int count = 10;
+	int need = 10000;
+	std::list&lt;void*&gt; list;
+	for(int i=0;i&lt;count;++i)
+	{
+		for(int j=0;j&lt;need;++j)
+		{
+			void* p = pool.malloc_chunk();
+			EXPECT_TRUE(p);
+			list.push_back(p);
+		}
+		EXPECT_EQ(pool.get_frees(),0);
+		EXPECT_EQ(pool.get_mallocs(),need);
+
+		BOOST_FOREACH(void* p,list)
+		{
+			pool.free_chunk(p);
+		}
+		list.clear();
+
+		EXPECT_EQ(pool.get_frees(),need);
+		EXPECT_EQ(pool.get_mallocs(),0);
+	}
+
+	pool.release_memory(5);
+	EXPECT_EQ(pool.get_frees(),5);
+	pool.release_memory();
+	EXPECT_EQ(pool.get_frees(),0);
+}
+</pre>
+		</p>
+	</div>
+
+	<div class="note"><a name="pool_object"></a>
+		<p><span class="flag">pool_object</span>
+<pre><span class="care">#include &lt;dark-cpp/pool/pool_object.hpp&gt;
+namespace dark::pool</span>
+
+pool_object 是孤 在 pool_chunk 之上 實現的 一個 c++ 對象內存池
+pool_object 使用方式 基本 同 pool_chunk 
+只是 需要 調用 多個 重載參數的([0,10]) construct 申請對象
+destory 釋放對象
+</pre>
+		</p>
+		<p><span class="flag">public</span>
+<pre>//從內存池 申請 object 同時 調用 對應構造函數
+element_type * construct(...)
+
+//歸還 object 到內存池 在歸還前 調用析構函數
+inline void destory(element_type * chunk)
+</pre>
+		</p>
+		<p><span class="flag">example</span>
+<pre>#include &lt;dark-cpp/pool/pool_object.hpp&gt;
+
+class Animal
+{
+public:
+	std::string name;
+	Animal(const std::string& name)
+	{
+		this-&gt;name = name;
+	}
+	virtual ~Animal()
+	{
+
+	}
+};
+TEST(PoolPoolObjectTest, HandleNoneZeroInput)
+{
+	dark::pool::pool_object&lt;Animal&gt; pool(boost::make_shared&lt;boost::mutex&gt;());
+	int count = 10;
+	int need = 10000;
+	std::list&lt;Animal*&gt; list;
+	for(int i=0;i&lt;count;++i)
+	{
+		for(int j=0;j&lt;need;++j)
+		{
+			Animal* p = pool.construct("cat");
+			EXPECT_TRUE(p);
+			list.push_back(p);
+		}
+		EXPECT_EQ(pool.get_frees(),0);
+		EXPECT_EQ(pool.get_mallocs(),need);
+
+		BOOST_FOREACH(Animal* p,list)
+		{
+			pool.destory(p);
+		}
+		list.clear();
+
+		EXPECT_EQ(pool.get_frees(),need);
+		EXPECT_EQ(pool.get_mallocs(),0);
+	}
+
+	pool.release_memory(5);
+	EXPECT_EQ(pool.get_frees(),5);
+	pool.release_memory();
+	EXPECT_EQ(pool.get_frees(),0);
+}
+</pre>
+		</p>
+	</div>
+
+</div>
+</body>
+</html>
+
