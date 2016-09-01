@@ -37,7 +37,7 @@ buffer_t 是一個仿造 golang bytes.Buffer 的 byte 數據流 輸入輸出 緩
 buffer_t(int capacity = 1024/*分塊長度*/,bool sync = false)
 
 //清空緩存 刪除所有待讀數據
-inline void reset()
+inline void reset(bool clearcache)
 
 //返回 流中 待讀字節數
 std::size_t size()

@@ -42,7 +42,12 @@ namespace dark
 
 				_offset = _size = 0;
 			}
-
+			//重置 分片
+			inline void reset()
+			{
+				_offset = _size = 0;
+			}
+			//返回 有效 實際大小
 			std::size_t size() const
 			{
 				return _size;
@@ -135,6 +140,9 @@ namespace dark
 			//分片 緩存
 			std::list<fragmentation_spt> _fragmentations;
 
+			//緩存一個 分片 以便 可以重複利用
+			fragmentation_spt _cache;
+
 			create_fragmentation_spt_bf_t _create_fragmentation_spt_f;
 		public:
 			buffer_t(int capacity = 1024/*分塊長度*/,create_fragmentation_spt_bf_t create_fragmentation_spt_f=create_fragmentation_spt,bool sync = false)
@@ -148,15 +156,15 @@ namespace dark
 			}
 
 			//清空緩存 刪除所有待讀數據
-			inline void reset()
+			inline void reset(bool clearcache = true)
 			{
 				if(_mutex)
 				{
 					boost::mutex::scoped_lock lock(*_mutex);
-					_fragmentations.clear();
+					unlock_reset(clearcache);
 					return;
 				}
-				_fragmentations.clear();
+				unlock_reset(clearcache);
 			}
 			//返回 流中 待讀字節數
 			std::size_t size()
@@ -169,6 +177,23 @@ namespace dark
 				return unlock_size();
 			}
 		protected:
+			void unlock_reset(bool clearcache)
+			{
+				if(clearcache)
+				{
+					_cache.reset();
+					_fragmentations.clear();
+				}
+				else
+				{
+					if(!_cache && !_fragmentations.empty())
+					{
+						_cache = _fragmentations.back();
+						_cache->reset();
+					}
+					_fragmentations.clear();
+				}
+			}
 			std::size_t unlock_size()
 			{
 				std::size_t sum = 0;
@@ -327,6 +352,7 @@ namespace dark
 					fragmentation_spt fragmentation = _fragmentations.front();
 					if (fragmentation->size() < 1)
 					{
+						destory_fragmentation(_fragmentations.front());
 						_fragmentations.pop_front();
 						continue;
 					}
@@ -345,7 +371,19 @@ namespace dark
 					{
 						break;
 					}
+					destory_fragmentation(_fragmentations.front());
 					_fragmentations.pop_front();
+				}
+			}
+
+		protected:
+			//銷毀分片
+			void destory_fragmentation(fragmentation_spt chunk,bool cache = true/*是否 保存 緩存*/)
+			{
+				if(cache && !_cache)
+				{
+					chunk->reset();
+					_cache = chunk;
 				}
 			}
 		};
