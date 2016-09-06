@@ -1,0 +1,586 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>dark::bytes</title>
+	<script type="text/javascript" src="../../js/jquery1.9.1.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="../../css/style.css">
+	<script type="text/javascript" src="../../js/style.js"></script>
+</head>
+<body>
+<div class="View">
+	<div>
+		<a href="../../index.html" class="NavigationBtn">namespace</a>
+		<a href="../../class.html" class="NavigationBtn">class</a>
+	</div>
+
+	<div class="ViewPackage">
+		<h1>namespace dark::bytes</h1>
+		<div><a href="#Overview">Overview</a></div>
+		<div><a href="#Index">Index</a></div>
+		<div><a href="#Info">Info</a></div>
+	</div>
+
+	<div class="ViewOverview">
+		<a name="Overview"></a>
+		<h2 class="ToggleButton">Overview</h2>
+		<div>
+			<p class="TextOverview">byte 流相關</p>
+		</div>
+	</div>
+
+	<div clas="ViewIndex">
+		<a name="Index"></a>
+		<h2 class="ToggleButton">Index</h2>
+		<div>
+			<div>
+			
+			</div>
+
+			<div>
+			
+			</div>
+
+
+			<div>
+			
+				<a class="LinkLv1" href="#st_0">bytes_spt</a>
+
+				
+
+				
+			
+			
+				<a class="LinkLv1" href="#st_1">create_bytes_spt_bf_t</a>
+
+				
+
+				
+			
+			
+				<a class="LinkLv1" href="#st_2">fragmentation_t</a>
+
+				
+
+				
+					<a class="LinkLv2" href="#stf_2_0">static bytes_spt create_bytes_t(int capacity)</a>
+				
+					<a class="LinkLv2" href="#stf_2_1">fragmentation_t(int capacity,create_bytes_spt_bf_t create_bytes_t_f = create_bytes_t)</a>
+				
+					<a class="LinkLv2" href="#stf_2_2">inline void reset()</a>
+				
+					<a class="LinkLv2" href="#stf_2_3">inline std::size_t size() const</a>
+				
+					<a class="LinkLv2" href="#stf_2_4">inline std::size_t get_free()</a>
+				
+					<a class="LinkLv2" href="#stf_2_5">std::size_t write(const char* bytes,std::size_t n)</a>
+				
+					<a class="LinkLv2" href="#stf_2_6">std::size_t read(char* bytes,std::size_t n)</a>
+				
+					<a class="LinkLv2" href="#stf_2_7">std::size_t copy_to(char* bytes,std::size_t n)</a>
+				
+					<a class="LinkLv2" href="#stf_2_8">std::size_t copy_to(std::size_t skip,char* bytes,std::size_t n)</a>
+				
+			
+			
+				<a class="LinkLv1" href="#st_3">fragmentation_spt</a>
+
+				
+
+				
+			
+			
+				<a class="LinkLv1" href="#st_4">create_fragmentation_spt_bf_t</a>
+
+				
+
+				
+			
+			
+				<a class="LinkLv1" href="#st_5">buffer_t</a>
+
+				
+
+				
+					<a class="LinkLv2" href="#stf_5_0">static fragmentation_spt create_fragmentation_spt(int capacity)</a>
+				
+					<a class="LinkLv2" href="#stf_5_1">buffer_t(int capacity = 1024,create_fragmentation_spt_bf_t create_fragmentation_spt_f=create_fragmentation_spt,bool sync = false)</a>
+				
+					<a class="LinkLv2" href="#stf_5_2">inline void reset(bool clearcache = true)</a>
+				
+					<a class="LinkLv2" href="#stf_5_3">std::size_t size()</a>
+				
+					<a class="LinkLv2" href="#stf_5_4">std::size_t copy_to(char* bytes,std::size_t n)</a>
+				
+					<a class="LinkLv2" href="#stf_5_5">std::size_t copy_to(std::size_t skip,char* bytes,std::size_t n)</a>
+				
+					<a class="LinkLv2" href="#stf_5_6">std::size_t write(const char* bytes,std::size_t n)</a>
+				
+					<a class="LinkLv2" href="#stf_5_7">std::size_t read(char* bytes,std::size_t n)</a>
+				
+			
+			
+				<a class="LinkLv1" href="#st_6">buffer_spt</a>
+
+				
+
+				
+			
+			
+			</div>
+		</div>
+	</div>
+
+
+	<div class="ViewInfo">
+		<a name="Info"></a>
+		<h2 class="ToggleButton">Info</h2>
+		<div>
+			
+
+			
+
+			
+			<div>
+				<div>
+					<a name="st_0"></a>
+					<div class="InfoName">
+						bytes_spt
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>byte 數據流的 智能指針</pre>
+							<pre>typedef boost::shared_array&lt;char&gt; bytes_spt;</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+			</div>
+			
+			<div>
+				<div>
+					<a name="st_1"></a>
+					<div class="InfoName">
+						create_bytes_spt_bf_t
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>創建數據流的 functor</pre>
+							<pre>typedef boost::function&lt;bytes_spt(int)&gt; create_bytes_spt_bf_t;</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+			</div>
+			
+			<div>
+				<div>
+					<a name="st_2"></a>
+					<div class="InfoName">
+						fragmentation_t
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>一塊連續的 內存
+好吧 就是對一個 char 數組的 封裝罷了</pre>
+							<pre>class fragmentation_t</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+				<div>
+					<a name="stf_2_0"></a>
+					<div class="InfoName">
+						<div>
+							fragmentation_t
+						</div>
+						<div class="InfoNameLv1">
+							static bytes_spt create_bytes_t(int capacity)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>默認的 數據塊創建方式</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_2_1"></a>
+					<div class="InfoName">
+						<div>
+							fragmentation_t
+						</div>
+						<div class="InfoNameLv1">
+							fragmentation_t(int capacity,create_bytes_spt_bf_t create_bytes_t_f = create_bytes_t)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>構造函數
+capacity指定分片大小 create_bytes_spt_bf_t指定分片創建方式</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_2_2"></a>
+					<div class="InfoName">
+						<div>
+							fragmentation_t
+						</div>
+						<div class="InfoNameLv1">
+							inline void reset()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>重置 分片</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_2_3"></a>
+					<div class="InfoName">
+						<div>
+							fragmentation_t
+						</div>
+						<div class="InfoNameLv1">
+							inline std::size_t size() const
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>//返回 有效數據 實際大小</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_2_4"></a>
+					<div class="InfoName">
+						<div>
+							fragmentation_t
+						</div>
+						<div class="InfoNameLv1">
+							inline std::size_t get_free()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回 空閒 容量</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_2_5"></a>
+					<div class="InfoName">
+						<div>
+							fragmentation_t
+						</div>
+						<div class="InfoNameLv1">
+							std::size_t write(const char* bytes,std::size_t n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>寫入數據 返回實際寫入量</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_2_6"></a>
+					<div class="InfoName">
+						<div>
+							fragmentation_t
+						</div>
+						<div class="InfoNameLv1">
+							std::size_t read(char* bytes,std::size_t n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>讀取 數據 返回實際讀取 量
+被讀取的 數據 將被 移除 緩衝區</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_2_7"></a>
+					<div class="InfoName">
+						<div>
+							fragmentation_t
+						</div>
+						<div class="InfoNameLv1">
+							std::size_t copy_to(char* bytes,std::size_t n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>只 copy 數據 不 刪除緩衝區</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_2_8"></a>
+					<div class="InfoName">
+						<div>
+							fragmentation_t
+						</div>
+						<div class="InfoNameLv1">
+							std::size_t copy_to(std::size_t skip,char* bytes,std::size_t n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>跳過n字節 copy</pre>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+			<div>
+				<div>
+					<a name="st_3"></a>
+					<div class="InfoName">
+						fragmentation_spt
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>數據分片的 智能指針</pre>
+							<pre>typedef boost::shared_ptr&lt;fragmentation_t&gt; fragmentation_spt;</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+			</div>
+			
+			<div>
+				<div>
+					<a name="st_4"></a>
+					<div class="InfoName">
+						create_fragmentation_spt_bf_t
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>創建數據流分片的 functor</pre>
+							<pre>typedef boost::function&lt;fragmentation_spt(int)&gt; create_fragmentation_spt_bf_t;</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+			</div>
+			
+			<div>
+				<div>
+					<a name="st_5"></a>
+					<div class="InfoName">
+						buffer_t
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>一個類似 golang bytes.Buffer 的 io 緩衝區
+#include &lt;dark/bytes/buffer.hpp&gt;</pre>
+							<pre>class buffer_t: boost::noncopyable;</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+				<div>
+					<a name="stf_5_0"></a>
+					<div class="InfoName">
+						<div>
+							buffer_t
+						</div>
+						<div class="InfoNameLv1">
+							static fragmentation_spt create_fragmentation_spt(int capacity)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>默認的 分片創建方式</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_5_1"></a>
+					<div class="InfoName">
+						<div>
+							buffer_t
+						</div>
+						<div class="InfoNameLv1">
+							buffer_t(int capacity = 1024,create_fragmentation_spt_bf_t create_fragmentation_spt_f=create_fragmentation_spt,bool sync = false)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>構造函數
+capacity 每塊分片大小
+create_fragmentation_spt_bf_t 如何創建分片
+sync是保證線程同步</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_5_2"></a>
+					<div class="InfoName">
+						<div>
+							buffer_t
+						</div>
+						<div class="InfoNameLv1">
+							inline void reset(bool clearcache = true)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>清空緩存 刪除所有待讀數據
+clearcache 是否釋放 緩存的 分片內存</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_5_3"></a>
+					<div class="InfoName">
+						<div>
+							buffer_t
+						</div>
+						<div class="InfoNameLv1">
+							std::size_t size()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回 流中 待讀字節數</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_5_4"></a>
+					<div class="InfoName">
+						<div>
+							buffer_t
+						</div>
+						<div class="InfoNameLv1">
+							std::size_t copy_to(char* bytes,std::size_t n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>將緩衝區 copy 到指定內存 返回實際 copy數據長
+被copy的數據 不會從 緩衝區中 刪除
+如果 n &gt; 緩衝區 數據 將 只copy 緩衝區 否則 copy n 字節數據</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_5_5"></a>
+					<div class="InfoName">
+						<div>
+							buffer_t
+						</div>
+						<div class="InfoNameLv1">
+							std::size_t copy_to(std::size_t skip,char* bytes,std::size_t n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>跳過 skip 字節 copy緩衝區數據</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_5_6"></a>
+					<div class="InfoName">
+						<div>
+							buffer_t
+						</div>
+						<div class="InfoNameLv1">
+							std::size_t write(const char* bytes,std::size_t n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>向緩衝區尾寫入數據流 返回實際寫入量</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_5_7"></a>
+					<div class="InfoName">
+						<div>
+							buffer_t
+						</div>
+						<div class="InfoNameLv1">
+							std::size_t read(char* bytes,std::size_t n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>從緩衝區頭讀取數據 返回實際讀取量
+被讀取的數據將被移出緩衝區</pre>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+			<div>
+				<div>
+					<a name="st_6"></a>
+					<div class="InfoName">
+						buffer_spt
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>buffer_t的 智能指針</pre>
+							<pre>typedef boost::shared_ptr&lt;buffer_t&gt; buffer_spt;</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+			</div>
+			
+		</div>
+	</div>
+
+	<div style="text-align: center;margin-top: 10px;"><a href="https://github.com/zuiwuchang" target="_blank">https://github.com/zuiwuchang<br/>
+	by dark king</a></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,535 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>dark::pool</title>
+	<script type="text/javascript" src="../../js/jquery1.9.1.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="../../css/style.css">
+	<script type="text/javascript" src="../../js/style.js"></script>
+</head>
+<body>
+<div class="View">
+	<div>
+		<a href="../../index.html" class="NavigationBtn">namespace</a>
+		<a href="../../class.html" class="NavigationBtn">class</a>
+	</div>
+
+	<div class="ViewPackage">
+		<h1>namespace dark::pool</h1>
+		<div><a href="#Overview">Overview</a></div>
+		<div><a href="#Index">Index</a></div>
+		<div><a href="#Info">Info</a></div>
+	</div>
+
+	<div class="ViewOverview">
+		<a name="Overview"></a>
+		<h2 class="ToggleButton">Overview</h2>
+		<div>
+			<p class="TextOverview">各種池 相關</p>
+		</div>
+	</div>
+
+	<div clas="ViewIndex">
+		<a name="Index"></a>
+		<h2 class="ToggleButton">Index</h2>
+		<div>
+			<div>
+			
+			</div>
+
+			<div>
+			
+			</div>
+
+
+			<div>
+			
+				<a class="LinkLv1" href="#st_0">pool_chunk_t</a>
+
+				
+
+				
+					<a class="LinkLv2" href="#stf_0_0">pool_chunk_t(std::size_t chunk_size,dark::thread::mutex_spt mutex = dark::thread::mutex_spt())</a>
+				
+					<a class="LinkLv2" href="#stf_0_1">virtual ~pool_chunk_t()</a>
+				
+					<a class="LinkLv2" href="#stf_0_2">inline std::size_t get_frees()</a>
+				
+					<a class="LinkLv2" href="#stf_0_3">inline std::size_t get_mallocs()</a>
+				
+					<a class="LinkLv2" href="#stf_0_4">inline void * malloc_chunk()</a>
+				
+					<a class="LinkLv2" href="#stf_0_5">inline void free_chunk(element_type * chunk)</a>
+				
+					<a class="LinkLv2" href="#stf_0_6">void release_memory()</a>
+				
+					<a class="LinkLv2" href="#stf_0_7">void release_memory(std::size_t n)</a>
+				
+					<a class="LinkLv2" href="#stf_0_8">void purge_memory()</a>
+				
+					<a class="LinkLv2" href="#stf_0_9">inline bool is_from(element_type *chunk)</a>
+				
+			
+			
+				<a class="LinkLv1" href="#st_1">pool_object_t</a>
+
+				
+					<a class="LinkLv2" href="#stv_1_0">element_type</a>
+				
+
+				
+					<a class="LinkLv2" href="#stf_1_0">pool_object_t(dark::thread::mutex_spt mutex = dark::thread::mutex_spt())</a>
+				
+					<a class="LinkLv2" href="#stf_1_1">virtual ~pool_object_t()</a>
+				
+					<a class="LinkLv2" href="#stf_1_2">inline std::size_t get_frees()</a>
+				
+					<a class="LinkLv2" href="#stf_1_3">inline std::size_t get_mallocs()</a>
+				
+					<a class="LinkLv2" href="#stf_1_4">element_type * construct(...)</a>
+				
+					<a class="LinkLv2" href="#stf_1_5">inline void destory(element_type * chunk)</a>
+				
+					<a class="LinkLv2" href="#stf_1_6">void release_memory()</a>
+				
+					<a class="LinkLv2" href="#stf_1_7">void release_memory(std::size_t n)</a>
+				
+					<a class="LinkLv2" href="#stf_1_8">void purge_memory()</a>
+				
+					<a class="LinkLv2" href="#stf_1_9">inline bool is_from(element_type *chunk)</a>
+				
+			
+			
+			</div>
+		</div>
+	</div>
+
+
+	<div class="ViewInfo">
+		<a name="Info"></a>
+		<h2 class="ToggleButton">Info</h2>
+		<div>
+			
+
+			
+
+			
+			<div>
+				<div>
+					<a name="st_0"></a>
+					<div class="InfoName">
+						pool_chunk_t
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>一個可申請固定 大小內存的 內存池
+內存池不會自動將未使用的內存還給os 可以調用release_memory手動回收
+#include &lt;dark/pool/pool_chunk.hpp&gt;</pre>
+							<pre>class pool_chunk_t: boost::noncopyable;</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+				<div>
+					<a name="stf_0_0"></a>
+					<div class="InfoName">
+						<div>
+							pool_chunk_t
+						</div>
+						<div class="InfoNameLv1">
+							pool_chunk_t(std::size_t chunk_size,dark::thread::mutex_spt mutex = dark::thread::mutex_spt())
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>構造函數
+chunk_size指定每次申請內存 大小
+mutex非空則啟用同步</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_1"></a>
+					<div class="InfoName">
+						<div>
+							pool_chunk_t
+						</div>
+						<div class="InfoNameLv1">
+							virtual ~pool_chunk_t()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>析構函數
+自動調用 purge_memory 將內存 還給os</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_2"></a>
+					<div class="InfoName">
+						<div>
+							pool_chunk_t
+						</div>
+						<div class="InfoNameLv1">
+							inline std::size_t get_frees()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回 內存池中 空閒內存 塊數</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_3"></a>
+					<div class="InfoName">
+						<div>
+							pool_chunk_t
+						</div>
+						<div class="InfoNameLv1">
+							inline std::size_t get_mallocs()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回 內存池中 使用的 內存 塊數</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_4"></a>
+					<div class="InfoName">
+						<div>
+							pool_chunk_t
+						</div>
+						<div class="InfoNameLv1">
+							inline void * malloc_chunk()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>從內存池中 申請 chunk</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_5"></a>
+					<div class="InfoName">
+						<div>
+							pool_chunk_t
+						</div>
+						<div class="InfoNameLv1">
+							inline void free_chunk(element_type * chunk)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>歸還 chunk 到內存池</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_6"></a>
+					<div class="InfoName">
+						<div>
+							pool_chunk_t
+						</div>
+						<div class="InfoNameLv1">
+							void release_memory()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>將 未使用 內存 還給 os</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_7"></a>
+					<div class="InfoName">
+						<div>
+							pool_chunk_t
+						</div>
+						<div class="InfoNameLv1">
+							void release_memory(std::size_t n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>同release_memory 但 保存 n個 chunk 在池中</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_8"></a>
+					<div class="InfoName">
+						<div>
+							pool_chunk_t
+						</div>
+						<div class="InfoNameLv1">
+							void purge_memory()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>將所有 內存 還給 os 
+析構時  被 自動調用</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_9"></a>
+					<div class="InfoName">
+						<div>
+							pool_chunk_t
+						</div>
+						<div class="InfoNameLv1">
+							inline bool is_from(element_type *chunk)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回 指針 是否 來自內存池</pre>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+			<div>
+				<div>
+					<a name="st_1"></a>
+					<div class="InfoName">
+						pool_object_t
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>在 pool_chunk 之上 實現的 一個 c&#43;&#43; 對象內存池
+#include &lt;dark/pool/pool_object.hpp&gt;</pre>
+							<pre>template&lt;typename T&gt;
+class pool_object_t: boost::noncopyable;</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+				<div>
+					<a name="stv_1_0"></a>
+					<div class="InfoName">
+						<div>
+							pool_object_t
+						</div>
+						<div class="InfoNameLv1">
+							element_type
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>protected :
+	typedef T element_type;</pre>
+						</div>
+					</div>
+				</div>
+				
+
+				
+				<div>
+					<a name="stf_1_0"></a>
+					<div class="InfoName">
+						<div>
+							pool_object_t
+						</div>
+						<div class="InfoNameLv1">
+							pool_object_t(dark::thread::mutex_spt mutex = dark::thread::mutex_spt())
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>構造函數
+mutex非空則啟用同步</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_1"></a>
+					<div class="InfoName">
+						<div>
+							pool_object_t
+						</div>
+						<div class="InfoNameLv1">
+							virtual ~pool_object_t()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>析構函數
+自動調用 purge_memory 將內存 還給os</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_2"></a>
+					<div class="InfoName">
+						<div>
+							pool_object_t
+						</div>
+						<div class="InfoNameLv1">
+							inline std::size_t get_frees()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回 內存池中 空閒內存 塊數</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_3"></a>
+					<div class="InfoName">
+						<div>
+							pool_object_t
+						</div>
+						<div class="InfoNameLv1">
+							inline std::size_t get_mallocs()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回 內存池中 使用的 內存 塊數</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_4"></a>
+					<div class="InfoName">
+						<div>
+							pool_object_t
+						</div>
+						<div class="InfoNameLv1">
+							element_type * construct(...)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>從內存池 申請 object 同時調用其構造函數
+可接受[0,10]個參數綁定</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_5"></a>
+					<div class="InfoName">
+						<div>
+							pool_object_t
+						</div>
+						<div class="InfoNameLv1">
+							inline void destory(element_type * chunk)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>歸還 object 到內存池 同時調用其析構函數</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_6"></a>
+					<div class="InfoName">
+						<div>
+							pool_object_t
+						</div>
+						<div class="InfoNameLv1">
+							void release_memory()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>將 未使用 內存 還給 os</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_7"></a>
+					<div class="InfoName">
+						<div>
+							pool_object_t
+						</div>
+						<div class="InfoNameLv1">
+							void release_memory(std::size_t n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>同release_memory 但 保存 n個 chunk 在池中</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_8"></a>
+					<div class="InfoName">
+						<div>
+							pool_object_t
+						</div>
+						<div class="InfoNameLv1">
+							void purge_memory()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>將所有 內存 還給 os 
+析構時  被 自動調用
+已被申請的 object 析構函數不會被調用</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_9"></a>
+					<div class="InfoName">
+						<div>
+							pool_object_t
+						</div>
+						<div class="InfoNameLv1">
+							inline bool is_from(element_type *chunk)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回 指針 是否 來自內存池</pre>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+		</div>
+	</div>
+
+	<div style="text-align: center;margin-top: 10px;"><a href="https://github.com/zuiwuchang" target="_blank">https://github.com/zuiwuchang<br/>
+	by dark king</a></div>
+</div>
+</body>
+</html>

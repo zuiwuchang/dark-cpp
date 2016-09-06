@@ -1,0 +1,77 @@
+h1,h2,h3,h4{
+	margin: 20px 0 20px;
+	padding: 0;
+	color: #375EAB;
+	font-weight: bold;
+}
+a,.text {
+    color: #375EAB;
+    text-decoration: none;
+}
+a:hover{
+	 text-decoration:underline;
+}
+
+.View{
+	padding: 16px;
+
+}
+
+.ToggleButton:hover{
+	cursor:pointer;
+}
+.TextOverview{
+	word-wrap: break-word;
+	margin: 20px;
+	text-align: left;
+	color: #222;
+	font-family: Arial, sans-serif;
+	font-size: 16px;
+	line-height: 1.3em;
+}
+.LinkLv1{
+	margin-left: 20px;
+	display: block;
+}
+.LinkLv2{
+	margin-left: 40px;
+	display: block;
+}
+
+.InfoName{
+	font-size: 20px;
+	background: #E0EBF5;
+	padding: 8px;
+	line-height: 1.25;
+	font-weight: normal;
+	color: #375EAB;
+	margin: 20px 0 20px;
+	border-radius: 5px;
+}
+.InfoTextBox{
+	margin-top: -16px;
+	padding: 5px;
+}
+.InfoText{
+	font-size: 14px;
+	background: #EFEFEF;
+	padding: 16px 10px 16px 10px;
+	line-height: 1.25;
+	font-weight: normal;
+	color: #222;
+	border-radius: 5px;
+}
+.InfoNameLv1{
+	margin-left: 20px;
+}
+
+.NavigationBtn{
+	margin: 10px 2px;
+	padding: 10px;
+	color: white;
+	background: #375EAB;
+	border: 1px solid #375EAB;
+	text-decoration: none;
+	font-size: 16px;
+	border-radius: 5px;
+}

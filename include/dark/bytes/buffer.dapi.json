@@ -1,0 +1,129 @@
+{
+	"structs":[
+		{
+			"overview":"byte 數據流的 智能指針",
+			"type":{
+				"Name":"bytes_spt",
+				"Text":"typedef boost::shared_array<char> bytes_spt;"
+			}
+		},
+		{
+			"overview":"創建數據流的 functor",
+			"type":{
+				"Name":"create_bytes_spt_bf_t",
+				"Text":"typedef boost::function<bytes_spt(int)> create_bytes_spt_bf_t;"
+			}
+		},
+		{
+			"overview":"一塊連續的 內存\n好吧 就是對一個 char 數組的 封裝罷了",
+			"type":{
+				"Name":"fragmentation_t",
+				"Text":"class fragmentation_t"
+			},
+			"funcs":[
+				{
+					"name":"static bytes_spt create_bytes_t(int capacity)",
+					"text":"默認的 數據塊創建方式"
+				},
+				{
+					"name":"fragmentation_t(int capacity,create_bytes_spt_bf_t create_bytes_t_f = create_bytes_t)",
+					"text":"構造函數\ncapacity指定分片大小 create_bytes_spt_bf_t指定分片創建方式"
+				},
+				{
+					"name":"inline void reset()",
+					"text":"重置 分片"
+				},
+
+				{
+					"name":"inline std::size_t size() const",
+					"text":"//返回 有效數據 實際大小"
+				},
+				{
+					"name":"inline std::size_t get_free()",
+					"text":"返回 空閒 容量"
+				},
+				{
+					"name":"std::size_t write(const char* bytes,std::size_t n)",
+					"text":"寫入數據 返回實際寫入量"
+				},
+
+				{
+					"name":"std::size_t read(char* bytes,std::size_t n)",
+					"text":"讀取 數據 返回實際讀取 量\n被讀取的 數據 將被 移除 緩衝區"
+				},
+				{
+					"name":"std::size_t copy_to(char* bytes,std::size_t n)",
+					"text":"只 copy 數據 不 刪除緩衝區"
+				},
+				{
+					"name":"std::size_t copy_to(std::size_t skip,char* bytes,std::size_t n)",
+					"text":"跳過n字節 copy"
+				}
+			]
+		},
+		{
+			"overview":"數據分片的 智能指針",
+			"type":{
+				"Name":"fragmentation_spt",
+				"Text":"typedef boost::shared_ptr<fragmentation_t> fragmentation_spt;"
+			}
+		},
+		{
+			"overview":"創建數據流分片的 functor",
+			"type":{
+				"Name":"create_fragmentation_spt_bf_t",
+				"Text":"typedef boost::function<fragmentation_spt(int)> create_fragmentation_spt_bf_t;"
+			}
+		},
+		{
+			"overview":"一個類似 golang bytes.Buffer 的 io 緩衝區\n#include <dark/bytes/buffer.hpp>",
+			"type":{
+				"Name":"buffer_t",
+				"Text":"class buffer_t: boost::noncopyable;"
+			},
+			"funcs":[
+				{
+					"name":"static fragmentation_spt create_fragmentation_spt(int capacity)",
+					"text":"默認的 分片創建方式"
+				},
+				{
+					"name":"buffer_t(int capacity = 1024,create_fragmentation_spt_bf_t create_fragmentation_spt_f=create_fragmentation_spt,bool sync = false)",
+					"text":"構造函數\ncapacity 每塊分片大小\ncreate_fragmentation_spt_bf_t 如何創建分片\nsync是保證線程同步"
+				},
+				{
+					"name":"inline void reset(bool clearcache = true)",
+					"text":"清空緩存 刪除所有待讀數據\nclearcache 是否釋放 緩存的 分片內存"
+				},
+
+				{
+					"name":"std::size_t size()",
+					"text":"返回 流中 待讀字節數"
+				},
+				{
+					"name":"std::size_t copy_to(char* bytes,std::size_t n)",
+					"text":"將緩衝區 copy 到指定內存 返回實際 copy數據長\n被copy的數據 不會從 緩衝區中 刪除\n如果 n > 緩衝區 數據 將 只copy 緩衝區 否則 copy n 字節數據"
+				},
+				{
+					"name":"std::size_t copy_to(std::size_t skip,char* bytes,std::size_t n)",
+					"text":"跳過 skip 字節 copy緩衝區數據"
+				},
+
+				{
+					"name":"std::size_t write(const char* bytes,std::size_t n)",
+					"text":"向緩衝區尾寫入數據流 返回實際寫入量"
+				},
+				{
+					"name":"std::size_t read(char* bytes,std::size_t n)",
+					"text":"從緩衝區頭讀取數據 返回實際讀取量\n被讀取的數據將被移出緩衝區"
+				}
+			]
+		},
+		{
+			"overview":"buffer_t的 智能指針",
+			"type":{
+				"Name":"buffer_spt",
+				"Text":"typedef boost::shared_ptr<buffer_t> buffer_spt;"
+			}
+		}
+	]
+}

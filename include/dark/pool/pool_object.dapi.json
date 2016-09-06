@@ -1,0 +1,62 @@
+{
+	"structs":[
+		{
+			"overview":"在 pool_chunk 之上 實現的 一個 c++ 對象內存池\n#include <dark/pool/pool_object.hpp>",
+			"type":{
+				"Name":"pool_object_t",
+				"Text":"template<typename T>\nclass pool_object_t: boost::noncopyable;"
+			},
+			"vars":[
+				{
+					"name":"element_type",
+					"text":"protected :\n\ttypedef T element_type;"
+				}
+			],
+			"funcs":[
+				{
+					"name":"pool_object_t(dark::thread::mutex_spt mutex = dark::thread::mutex_spt())",
+					"text":"構造函數\nmutex非空則啟用同步"
+				},
+				{
+					"name":"virtual ~pool_object_t()",
+					"text":"析構函數\n自動調用 purge_memory 將內存 還給os"
+				},
+				{
+					"name":"inline std::size_t get_frees()",
+					"text":"返回 內存池中 空閒內存 塊數"
+				},
+
+				{
+					"name":"inline std::size_t get_mallocs()",
+					"text":"返回 內存池中 使用的 內存 塊數"
+				},
+				{
+					"name":"element_type * construct(...)",
+					"text":"從內存池 申請 object 同時調用其構造函數\n可接受[0,10]個參數綁定"
+				},
+				{
+					"name":"inline void destory(element_type * chunk)",
+					"text":"歸還 object 到內存池 同時調用其析構函數"
+				},
+
+				{
+					"name":"void release_memory()",
+					"text":"將 未使用 內存 還給 os"
+				},
+				{
+					"name":"void release_memory(std::size_t n)",
+					"text":"同release_memory 但 保存 n個 chunk 在池中"
+				},
+				{
+					"name":"void purge_memory()",
+					"text":"將所有 內存 還給 os \n析構時  被 自動調用\n已被申請的 object 析構函數不會被調用"
+				},
+
+				{
+					"name":"inline bool is_from(element_type *chunk)",
+					"text":"返回 指針 是否 來自內存池"
+				}
+			]
+		}
+	]
+}

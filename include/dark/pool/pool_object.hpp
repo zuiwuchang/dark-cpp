@@ -4,19 +4,19 @@
 	pool_object 是孤 在 pool_chunk 之上 實現的 一個 c++ 對象內存池 
 */
 
-#include <dark-cpp/pool/pool_chunk.hpp>
+#include <dark/pool/pool_chunk.hpp>
 namespace dark
 {
 	namespace pool
 	{
 		template<typename T>
-		class pool_object
+		class pool_object_t
 			: boost::noncopyable
 		{
 		protected:
 			typedef T element_type;
 			
-			pool_chunk _pool;
+			pool_chunk_t _pool;
 			dark::thread::mutex_spt _mutex;
 
 			inline element_type * malloc_from_pool()
@@ -28,11 +28,11 @@ namespace dark
 				_pool.free_chunk(chunk);
 			}
 		public:
-			pool_object(dark::thread::mutex_spt mutex = dark::thread::mutex_spt())
+			pool_object_t(dark::thread::mutex_spt mutex = dark::thread::mutex_spt())
 				:_mutex(mutex),_pool(sizeof(T))
 			{
 			}
-			virtual ~pool_object()
+			virtual ~pool_object_t()
 			{
 				purge_memory();
 			}

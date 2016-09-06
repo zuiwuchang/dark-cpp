@@ -1,0 +1,28 @@
+{
+	"structs":[
+		{
+			"overview":"boost::mutex 的 智能指針\n#include <dark/bytes/mutex.hpp>",
+			"type":{
+				"Name":"mutex_spt",
+				"Text":"typedef boost::shared_ptr<boost::mutex> mutex_spt;"
+			}
+		},
+		{
+			"overview":"一個類似 boost::mutex::scoped_lock 的東西\n只是現在 鎖定的是boost::mutex的智能指針",
+			"type":{
+				"Name":"scoped_mutex_lock",
+				"Text":"class scoped_mutex_lock:boost::noncopyable;"
+			},
+			"funcs":[
+				{
+					"name":"scoped_mutex_lock(mutex_spt mutex)",
+					"text":"構造函數\n如果 mutex 不為空 lock mutex"
+				},
+				{
+					"name":"virtual ~scoped_mutex_lock()",
+					"text":"析構函數\n如果構造時 鎖定了 mutex 現在 unlock"
+				}
+			]
+		}
+	]
+}

@@ -13,15 +13,15 @@ namespace dark
 {
 	namespace bytes
 	{
-		typedef boost::shared_array<char> bytes_t;
+		typedef boost::shared_array<char> bytes_spt;
 
-		typedef boost::function<bytes_t(int)> create_bytes_t_bf_t;
+		typedef boost::function<bytes_spt(int)> create_bytes_spt_bf_t;
 		//一塊連續的 內存 
 		//好吧 就是對一個 char 數組的 封裝罷了
 		class fragmentation_t
 		{
 		public:
-			 static bytes_t create_bytes_t(int capacity)
+			 static bytes_spt create_bytes_t(int capacity)
 			 {
 				 return boost::shared_array<char>(new char[capacity]);
 			 }
@@ -35,7 +35,7 @@ namespace dark
 			//有效數據 大小
 			std::size_t _size;
 		public:
-			fragmentation_t(int capacity,create_bytes_t_bf_t create_bytes_t_f = create_bytes_t)
+			fragmentation_t(int capacity,create_bytes_spt_bf_t create_bytes_t_f = create_bytes_t)
 			{
 				_capacity = capacity;
 				_data = create_bytes_t_f(capacity);
@@ -47,14 +47,14 @@ namespace dark
 			{
 				_offset = _size = 0;
 			}
-			//返回 有效 實際大小
-			std::size_t size() const
+			//返回 有效數據 實際大小
+			inline std::size_t size() const
 			{
 				return _size;
 			}
 			
 			//返回 空閒 容量
-			std::size_t get_free()
+			inline std::size_t get_free()
 			{
 				return _capacity - _offset - _size;
 			}

@@ -1,0 +1,56 @@
+{
+	"structs":[
+		{
+			"overview":"一個可申請固定 大小內存的 內存池\n內存池不會自動將未使用的內存還給os 可以調用release_memory手動回收\n#include <dark/pool/pool_chunk.hpp>",
+			"type":{
+				"Name":"pool_chunk_t",
+				"Text":"class pool_chunk_t: boost::noncopyable;"
+			},
+			"funcs":[
+				{
+					"name":"pool_chunk_t(std::size_t chunk_size,dark::thread::mutex_spt mutex = dark::thread::mutex_spt())",
+					"text":"構造函數\nchunk_size指定每次申請內存 大小\nmutex非空則啟用同步"
+				},
+				{
+					"name":"virtual ~pool_chunk_t()",
+					"text":"析構函數\n自動調用 purge_memory 將內存 還給os"
+				},
+				{
+					"name":"inline std::size_t get_frees()",
+					"text":"返回 內存池中 空閒內存 塊數"
+				},
+
+				{
+					"name":"inline std::size_t get_mallocs()",
+					"text":"返回 內存池中 使用的 內存 塊數"
+				},
+				{
+					"name":"inline void * malloc_chunk()",
+					"text":"從內存池中 申請 chunk"
+				},
+				{
+					"name":"inline void free_chunk(element_type * chunk)",
+					"text":"歸還 chunk 到內存池"
+				},
+
+				{
+					"name":"void release_memory()",
+					"text":"將 未使用 內存 還給 os"
+				},
+				{
+					"name":"void release_memory(std::size_t n)",
+					"text":"同release_memory 但 保存 n個 chunk 在池中"
+				},
+				{
+					"name":"void purge_memory()",
+					"text":"將所有 內存 還給 os \n析構時  被 自動調用"
+				},
+
+				{
+					"name":"inline bool is_from(element_type *chunk)",
+					"text":"返回 指針 是否 來自內存池"
+				}
+			]
+		}
+	]
+}

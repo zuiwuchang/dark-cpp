@@ -17,13 +17,13 @@
 
 #include <deque>
 
-#include <dark-cpp/thread/mutex.hpp>
+#include <dark/thread/mutex.hpp>
 
 namespace dark
 {
 	namespace pool
 	{
-		class pool_chunk
+		class pool_chunk_t
 			: boost::noncopyable
 		{
 		protected:
@@ -76,11 +76,11 @@ namespace dark
 				_frees.push_back(chunk);
 			}
 		public:
-			pool_chunk(std::size_t chunk_size,dark::thread::mutex_spt mutex = dark::thread::mutex_spt())
+			pool_chunk_t(std::size_t chunk_size,dark::thread::mutex_spt mutex = dark::thread::mutex_spt())
 				:_chunk_size(chunk_size),_mutex(mutex)
 			{
 			}
-			virtual ~pool_chunk()
+			virtual ~pool_chunk_t()
 			{
 				purge_memory();
 			}

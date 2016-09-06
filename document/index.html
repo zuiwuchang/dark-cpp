@@ -1,77 +1,122 @@
-<!DOCTYPE html >
+
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>dark-cpp</title>
-<link href="css.css" rel="stylesheet" type="text/css" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>All Namespace</title>
+	<script type="text/javascript" src="js/jquery1.9.1.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script type="text/javascript" src="js/style.js"></script>
+
+<style type="text/css">
+.ClassView{
+	padding-left: 40px;
+	padding-right: 40px;
+}
+.ClassLink{
+	margin-left: 16px;
+}
+.ClassPackage{
+	margin-left: 20px;
+	font-size: 22px;
+}
+#IdTableView th{
+	padding-left: 10px;
+	padding-right: 10px;
+	color: #222;
+	font-family: Arial, sans-serif;
+	font-size: 16px;
+	line-height: 1.3em;
+	text-align: left;
+}
+#IdTableView td{
+	padding-right: 10px;
+}
+</style>
 </head>
 <body>
-<div class="main">
-	<div class="title">
-		<a href="#utils">utils</a>
-		<a href="#strings">strings</a>
-		<a href="#bytes">bytes</a>
-		<a href="#pool">pool</a>
-		<a href="#io">io</a>
-		<a href="#mircosoft_windows">mircosoft windows</a>
-		
-	</div>
-	
-	<div class="note"><a name="utils"></a>
-		<p><span class="flag"><a target="_blank" href="utils/index.html">utils</a></span>
-<pre>一些 基本 工具 定義
-</pre>
-		</p>
+<div class="View">
+	<div>
+		<a href="class.html" class="NavigationBtn">class</a>
 	</div>
 
-	<div class="note"><a name="strings"></a>
-		<p><span class="flag"><a target="_blank" href="strings/index.html">strings</a></span>
-<pre>字符串 處理相關
-</pre>
-		</p>
-	</div>
-
-	<div class="note"><a name="bytes"></a>
-		<p><span class="flag"><a target="_blank" href="bytes/index.html">bytes</a></span>
-<pre>byte 處理
-</pre>
-		</p>
-	</div>
-
-	<div class="note"><a name="pool"></a>
-		<p><span class="flag"><a target="_blank" href="pool/index.html">pool</a></span>
-<pre>pool 是孤實現的 內存池
-</pre>
-		</p>
-	</div>
-
-	<div class="note"><a name="io"></a>
-		<p><span class="flag"><a href="#io">io</a></span>
-<pre>io 相關
-</pre>
-		</p>
-
-		<p><span class="flag"><a target="_blank" href="io/msg/index.html">msg</a></span>
-<pre>數據流 消息 相關
-</pre>
-		</p>
+	<div class="ViewPackage">
+	<h1>all namespace</h1>
 	</div>
 
 	
-	<div class="note"><a name="windows"></a>
-		<p><span class="flag"><a target="_blank" href="windows/index.html">mircosoft windows</a></span>
-<pre>mircosoft windows 平台相關 代碼
-</pre>
-		</p>
-	</div>
-
-	<div class="note"><a name="directx"></a>
-		<p><span class="flag"><a target="_blank" href="directx/index.html">mircosoft directx</a></span>
-<pre>mircosoft directx api的c++封裝
-</pre>
-		</p>
-	</div>
+	<table id="IdTableView">
+		<tr><th>Name</th><th>Synopsis</th></tr>
+	</table>
+	
+	<div style="text-align: center;margin-top: 10px;"><a href="https://github.com/zuiwuchang" target="_blank">https://github.com/zuiwuchang<br/>
+	by dark king</a></div>
 </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	var obj = {
+
+		"/dark/bytes":"byte 流相關",
+
+		"/dark/pool":"各種池 相關",
+
+		"/dark/thread":"線程相關",
+
+	};
+
+	var packages = {};
+	$.each(obj, function(key, val) {
+		var keys = key.substr(1).split("/");
+		add_package(packages,key,keys,val);
+	});
+
+	$.each(packages, function(key, val) {
+		add_table_tr(key,val,0)
+	});
+});
+
+function add_table_tr(key,obj,n){
+	var html = "<tr><td style='padding-left:" + 
+		(20 * n + 10 )+ "px'><a href='" + 
+		obj._dk_synopsis_url + "'>" + 
+		key + 
+		"</a></td><td><a href='" + 
+		obj._dk_synopsis_url + "'>" + 
+		obj._dk_synopsis_text + "</a></td></tr>";
+
+	$("#IdTableView").append($(html));
+
+	$.each(obj, function(k, val) {
+		if(typeof(val) == "object"){
+			add_table_tr(k,val,n + 1);
+		}
+	});
+}
+
+function add_package(packages,url,keys,text){
+	var pg = get_package(packages,keys);
+	pg._dk_synopsis_text = text;
+	pg._dk_synopsis_url = "." + url + "/doc.html";
+}
+function get_package(packages,keys){
+	var obj = packages;
+	for (var i = 0; i < keys.length; i++) {
+		var key = keys[i];
+		
+		var pg = obj[key];
+		if(pg == undefined){
+			pg = {
+				_dk_synopsis_text:"",
+				_dk_synopsis_url:"#",
+			};
+			obj[key] = pg;
+		}
+		obj = pg;
+	}
+	return pg;
+}
+</script>
 </body>
 </html>
-

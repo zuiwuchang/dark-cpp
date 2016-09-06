@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>dark::thread</title>
+	<script type="text/javascript" src="../../js/jquery1.9.1.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="../../css/style.css">
+	<script type="text/javascript" src="../../js/style.js"></script>
+</head>
+<body>
+<div class="View">
+	<div>
+		<a href="../../index.html" class="NavigationBtn">namespace</a>
+		<a href="../../class.html" class="NavigationBtn">class</a>
+	</div>
+
+	<div class="ViewPackage">
+		<h1>namespace dark::thread</h1>
+		<div><a href="#Overview">Overview</a></div>
+		<div><a href="#Index">Index</a></div>
+		<div><a href="#Info">Info</a></div>
+	</div>
+
+	<div class="ViewOverview">
+		<a name="Overview"></a>
+		<h2 class="ToggleButton">Overview</h2>
+		<div>
+			<p class="TextOverview">線程相關</p>
+		</div>
+	</div>
+
+	<div clas="ViewIndex">
+		<a name="Index"></a>
+		<h2 class="ToggleButton">Index</h2>
+		<div>
+			<div>
+			
+			</div>
+
+			<div>
+			
+			</div>
+
+
+			<div>
+			
+				<a class="LinkLv1" href="#st_0">mutex_spt</a>
+
+				
+
+				
+			
+			
+				<a class="LinkLv1" href="#st_1">scoped_mutex_lock</a>
+
+				
+
+				
+					<a class="LinkLv2" href="#stf_1_0">scoped_mutex_lock(mutex_spt mutex)</a>
+				
+					<a class="LinkLv2" href="#stf_1_1">virtual ~scoped_mutex_lock()</a>
+				
+			
+			
+			</div>
+		</div>
+	</div>
+
+
+	<div class="ViewInfo">
+		<a name="Info"></a>
+		<h2 class="ToggleButton">Info</h2>
+		<div>
+			
+
+			
+
+			
+			<div>
+				<div>
+					<a name="st_0"></a>
+					<div class="InfoName">
+						mutex_spt
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>boost::mutex 的 智能指針
+#include &lt;dark/bytes/mutex.hpp&gt;</pre>
+							<pre>typedef boost::shared_ptr&lt;boost::mutex&gt; mutex_spt;</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+			</div>
+			
+			<div>
+				<div>
+					<a name="st_1"></a>
+					<div class="InfoName">
+						scoped_mutex_lock
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>一個類似 boost::mutex::scoped_lock 的東西
+只是現在 鎖定的是boost::mutex的智能指針</pre>
+							<pre>class scoped_mutex_lock:boost::noncopyable;</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+				<div>
+					<a name="stf_1_0"></a>
+					<div class="InfoName">
+						<div>
+							scoped_mutex_lock
+						</div>
+						<div class="InfoNameLv1">
+							scoped_mutex_lock(mutex_spt mutex)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>構造函數
+如果 mutex 不為空 lock mutex</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_1"></a>
+					<div class="InfoName">
+						<div>
+							scoped_mutex_lock
+						</div>
+						<div class="InfoNameLv1">
+							virtual ~scoped_mutex_lock()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>析構函數
+如果構造時 鎖定了 mutex 現在 unlock</pre>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+		</div>
+	</div>
+
+	<div style="text-align: center;margin-top: 10px;"><a href="https://github.com/zuiwuchang" target="_blank">https://github.com/zuiwuchang<br/>
+	by dark king</a></div>
+</div>
+</body>
+</html>

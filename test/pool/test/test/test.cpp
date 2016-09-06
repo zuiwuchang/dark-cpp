@@ -12,8 +12,8 @@
 #endif
 
 
-#include <dark-cpp/pool/pool_chunk.hpp>
-#include <dark-cpp/pool/pool_object.hpp>
+#include <dark/pool/pool_chunk.hpp>
+#include <dark/pool/pool_object.hpp>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -51,7 +51,7 @@ TEST(UnPoolTest, HandleNoneZeroInput)
 //test pool_chunk
 TEST(PoolPoolTest, HandleNoneZeroInput)
 {
-	dark::pool::pool_chunk pool(1024,boost::make_shared<boost::mutex>());
+	dark::pool::pool_chunk_t pool(1024,boost::make_shared<boost::mutex>());
 	int count = 10;
 	int need = 10000;
 	std::list<void*> list;
@@ -99,7 +99,7 @@ public:
 //test pool_object
 TEST(PoolPoolObjectTest, HandleNoneZeroInput)
 {
-	dark::pool::pool_object<Animal> pool(boost::make_shared<boost::mutex>());
+	dark::pool::pool_object_t<Animal> pool(boost::make_shared<boost::mutex>());
 	int count = 10;
 	int need = 10000;
 	std::list<Animal*> list;

@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include <dark-cpp/bytes/buffer.hpp>
+#include <dark/bytes/buffer.hpp>
 
 #include <gtest/gtest.h>
 #include <boost/smart_ptr.hpp>
@@ -31,9 +31,9 @@ void d_bytes_t(char* p)
 {
 	pool_bytes.free(p);
 }
-dark::bytes::bytes_t create_bytes_t(int capacity)
+dark::bytes::bytes_spt create_bytes_t(int capacity)
 {
-	return dark::bytes::bytes_t((char*)pool_bytes.malloc(),d_bytes_t);
+	return dark::bytes::bytes_spt((char*)pool_bytes.malloc(),d_bytes_t);
 }
 
 boost::object_pool<dark::bytes::fragmentation_t> pool_fragmentation;
