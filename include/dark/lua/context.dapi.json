@@ -1,0 +1,128 @@
+{
+	"structs":[
+		{
+			"overview":"只是將lua官方 c api 用 boost::shared_ptr 包裝起來 罷了\npublic func 基本同 lua c api",
+			"type":{
+				"Name":"context_t",
+				"Text":"class context_t"
+			},
+			"funcs":[
+				{
+					"name":"context_t(bool openlibs = true)",
+					"text":"構造新的 lua 環境\nopenlibs 為 true 打開 lua 標準庫"
+				},
+				{
+					"name":"context_t(lua_State* l,bool close = true)",
+					"text":"包裝 lua 環境\nclose 為true 引用計數為0 調用 lua_close 否則不調用"
+				},
+				{
+					"name":"context_t(l_spt l)",
+					"text":"copy 構造"
+				},
+
+				{
+					"name":"inline context_t& operator=(const context_t& copy)",
+					"text":"複製 引用"
+				},
+				{
+					"name":"inline operator bool()const",
+					"text":"返回是否創建 lua 環境"
+				},
+				{
+					"name":"inline void reset()",
+					"text":"手動放棄 資源持有權"
+				},
+
+				{
+					"name":"inline operator l_spt()const",
+					"text":"返回 lua環境的 boost::shared_ptr 指針"
+				},
+				{
+					"name":"inline operator lua_State*()const",
+					"text":"返回 lua 環境 指針"
+				},
+				{
+					"name":"inline l_spt get_spt() const",
+					"text":"返回 lua環境的 boost::shared_ptr 指針"
+				},
+				{
+					"name":"inline lua_State* get()const",
+					"text":"返回 lua 環境 指針"
+				},
+
+				{
+					"name":"xxx",
+					"text":"lua_xxx"
+				},
+				{
+					"name":"l_xxx",
+					"text":"luaL_xxx"
+				},
+				{
+					"name":"void dump_stdout()",
+					"text":"將lua棧 情況打印到 標準輸出"
+				},
+
+				{
+					"name":"inline void createtable(int narr=0, int nrec=0)",
+					"text":"創建 一個 table 並入棧\nnarr 預計 將使用的 數組大小 的參考值\nnrec 預計 將使用的 hash表大小 的參考值"
+				},
+				{
+					"name":"inline void put_prop_string(int idx/*table 位置*/,const char* key)",
+					"text":"將 棧頂 設置到 table 的 key 並出棧"
+				},
+				{
+					"name":"inline void set_prop_string(int idx/*table 位置*/,const std::string& key)",
+					"text":"將 棧頂 設置到 table 的 key 並出棧"
+				},
+
+				{
+					"name":"inline void set_prop_index(int idx/*table 位置*/,int arr_idx)",
+					"text":"將 棧頂 設置到 table 的 指定位置 並出棧"
+				},
+				{
+					"name":"inline void get_prop_string(int idx/*table 位置*/,const std::string& key)",
+					"text":"在table中 查找key 返回到 棧頂 不存在返回 nil"
+				},
+				{
+					"name":"inline void get_prop_index(int idx/*table 位置*/,int arr_idx)",
+					"text":"在table中 查找arr_idx 返回到 棧頂 不存在返回 nil"
+				}
+			]
+		},
+		{
+			"overview":"在 析構時 執行 lua_pop 操作",
+			"type":{
+				"Name":"scoped_pop_t",
+				"Text":"class scoped_pop_t"
+			},
+			"funcs":[
+				{
+					"name":"scoped_pop_t(lua_State* l,int n)",
+					"text":"構造 在析構時 lua_pop(n)"
+				},
+				{
+					"name":"scoped_pop_t(context_t l,int n)",
+					"text":"構造 在析構時 lua_pop(n)"
+				},
+				{
+					"name":"scoped_pop_t& operator+=(int n)",
+					"text":"增加 pop 數量 n"
+				},
+
+				{
+					"name":"void operator++()",
+					"text":"增加 pop 數量 1"
+				},
+				{
+					"name":"scoped_pop_t& operator-=(int n)",
+					"text":"減少 pop 數量 n"
+				},
+				{
+					"name":"void operator--()",
+					"text":"減少 pop 數量 1"
+				}
+			]
+		}
+	]
+}

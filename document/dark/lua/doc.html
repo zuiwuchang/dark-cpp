@@ -1,0 +1,602 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>dark::lua</title>
+	<script type="text/javascript" src="../../js/jquery1.9.1.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="../../css/style.css">
+	<script type="text/javascript" src="../../js/style.js"></script>
+</head>
+<body>
+<div class="View">
+	<div>
+		<a href="../../index.html" class="NavigationBtn">namespace</a>
+		<a href="../../class.html" class="NavigationBtn">class</a>
+	</div>
+
+	<div class="ViewPackage">
+		<h1>namespace dark::lua</h1>
+		<div><a href="#Overview">Overview</a></div>
+		<div><a href="#Index">Index</a></div>
+		<div><a href="#Info">Info</a></div>
+	</div>
+
+	<div class="ViewOverview">
+		<a name="Overview"></a>
+		<h2 class="ToggleButton">Overview</h2>
+		<div>
+			<p class="TextOverview">lua 腳本相關</p>
+		</div>
+	</div>
+
+	<div clas="ViewIndex">
+		<a name="Index"></a>
+		<h2 class="ToggleButton">Index</h2>
+		<div>
+			<div>
+			
+			</div>
+
+			<div>
+			
+			</div>
+
+
+			<div>
+			
+				<a class="LinkLv1" href="#st_0">context_t</a>
+
+				
+
+				
+					<a class="LinkLv2" href="#stf_0_0">context_t(bool openlibs = true)</a>
+				
+					<a class="LinkLv2" href="#stf_0_1">context_t(lua_State* l,bool close = true)</a>
+				
+					<a class="LinkLv2" href="#stf_0_2">context_t(l_spt l)</a>
+				
+					<a class="LinkLv2" href="#stf_0_3">inline context_t&amp; operator=(const context_t&amp; copy)</a>
+				
+					<a class="LinkLv2" href="#stf_0_4">inline operator bool()const</a>
+				
+					<a class="LinkLv2" href="#stf_0_5">inline void reset()</a>
+				
+					<a class="LinkLv2" href="#stf_0_6">inline operator l_spt()const</a>
+				
+					<a class="LinkLv2" href="#stf_0_7">inline operator lua_State*()const</a>
+				
+					<a class="LinkLv2" href="#stf_0_8">inline l_spt get_spt() const</a>
+				
+					<a class="LinkLv2" href="#stf_0_9">inline lua_State* get()const</a>
+				
+					<a class="LinkLv2" href="#stf_0_10">xxx</a>
+				
+					<a class="LinkLv2" href="#stf_0_11">l_xxx</a>
+				
+					<a class="LinkLv2" href="#stf_0_12">void dump_stdout()</a>
+				
+					<a class="LinkLv2" href="#stf_0_13">inline void createtable(int narr=0, int nrec=0)</a>
+				
+					<a class="LinkLv2" href="#stf_0_14">inline void put_prop_string(int idx/*table 位置*/,const char* key)</a>
+				
+					<a class="LinkLv2" href="#stf_0_15">inline void set_prop_string(int idx/*table 位置*/,const std::string&amp; key)</a>
+				
+					<a class="LinkLv2" href="#stf_0_16">inline void set_prop_index(int idx/*table 位置*/,int arr_idx)</a>
+				
+					<a class="LinkLv2" href="#stf_0_17">inline void get_prop_string(int idx/*table 位置*/,const std::string&amp; key)</a>
+				
+					<a class="LinkLv2" href="#stf_0_18">inline void get_prop_index(int idx/*table 位置*/,int arr_idx)</a>
+				
+			
+			
+				<a class="LinkLv1" href="#st_1">scoped_pop_t</a>
+
+				
+
+				
+					<a class="LinkLv2" href="#stf_1_0">scoped_pop_t(lua_State* l,int n)</a>
+				
+					<a class="LinkLv2" href="#stf_1_1">scoped_pop_t(context_t l,int n)</a>
+				
+					<a class="LinkLv2" href="#stf_1_2">scoped_pop_t&amp; operator&#43;=(int n)</a>
+				
+					<a class="LinkLv2" href="#stf_1_3">void operator&#43;&#43;()</a>
+				
+					<a class="LinkLv2" href="#stf_1_4">scoped_pop_t&amp; operator-=(int n)</a>
+				
+					<a class="LinkLv2" href="#stf_1_5">void operator--()</a>
+				
+			
+			
+			</div>
+		</div>
+	</div>
+
+
+	<div class="ViewInfo">
+		<a name="Info"></a>
+		<h2 class="ToggleButton">Info</h2>
+		<div>
+			
+
+			
+
+			
+			<div>
+				<div>
+					<a name="st_0"></a>
+					<div class="InfoName">
+						context_t
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>只是將lua官方 c api 用 boost::shared_ptr 包裝起來 罷了
+public func 基本同 lua c api</pre>
+							<pre>class context_t</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+				<div>
+					<a name="stf_0_0"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							context_t(bool openlibs = true)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>構造新的 lua 環境
+openlibs 為 true 打開 lua 標準庫</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_1"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							context_t(lua_State* l,bool close = true)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>包裝 lua 環境
+close 為true 引用計數為0 調用 lua_close 否則不調用</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_2"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							context_t(l_spt l)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>copy 構造</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_3"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline context_t&amp; operator=(const context_t&amp; copy)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>複製 引用</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_4"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline operator bool()const
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回是否創建 lua 環境</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_5"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline void reset()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>手動放棄 資源持有權</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_6"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline operator l_spt()const
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回 lua環境的 boost::shared_ptr 指針</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_7"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline operator lua_State*()const
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回 lua 環境 指針</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_8"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline l_spt get_spt() const
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回 lua環境的 boost::shared_ptr 指針</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_9"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline lua_State* get()const
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>返回 lua 環境 指針</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_10"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							xxx
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>lua_xxx</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_11"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							l_xxx
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>luaL_xxx</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_12"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							void dump_stdout()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>將lua棧 情況打印到 標準輸出</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_13"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline void createtable(int narr=0, int nrec=0)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>創建 一個 table 並入棧
+narr 預計 將使用的 數組大小 的參考值
+nrec 預計 將使用的 hash表大小 的參考值</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_14"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline void put_prop_string(int idx/*table 位置*/,const char* key)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>將 棧頂 設置到 table 的 key 並出棧</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_15"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline void set_prop_string(int idx/*table 位置*/,const std::string&amp; key)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>將 棧頂 設置到 table 的 key 並出棧</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_16"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline void set_prop_index(int idx/*table 位置*/,int arr_idx)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>將 棧頂 設置到 table 的 指定位置 並出棧</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_17"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline void get_prop_string(int idx/*table 位置*/,const std::string&amp; key)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>在table中 查找key 返回到 棧頂 不存在返回 nil</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_0_18"></a>
+					<div class="InfoName">
+						<div>
+							context_t
+						</div>
+						<div class="InfoNameLv1">
+							inline void get_prop_index(int idx/*table 位置*/,int arr_idx)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>在table中 查找arr_idx 返回到 棧頂 不存在返回 nil</pre>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+			<div>
+				<div>
+					<a name="st_1"></a>
+					<div class="InfoName">
+						scoped_pop_t
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>在 析構時 執行 lua_pop 操作</pre>
+							<pre>class scoped_pop_t</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+				<div>
+					<a name="stf_1_0"></a>
+					<div class="InfoName">
+						<div>
+							scoped_pop_t
+						</div>
+						<div class="InfoNameLv1">
+							scoped_pop_t(lua_State* l,int n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>構造 在析構時 lua_pop(n)</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_1"></a>
+					<div class="InfoName">
+						<div>
+							scoped_pop_t
+						</div>
+						<div class="InfoNameLv1">
+							scoped_pop_t(context_t l,int n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>構造 在析構時 lua_pop(n)</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_2"></a>
+					<div class="InfoName">
+						<div>
+							scoped_pop_t
+						</div>
+						<div class="InfoNameLv1">
+							scoped_pop_t&amp; operator&#43;=(int n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>增加 pop 數量 n</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_3"></a>
+					<div class="InfoName">
+						<div>
+							scoped_pop_t
+						</div>
+						<div class="InfoNameLv1">
+							void operator&#43;&#43;()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>增加 pop 數量 1</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_4"></a>
+					<div class="InfoName">
+						<div>
+							scoped_pop_t
+						</div>
+						<div class="InfoNameLv1">
+							scoped_pop_t&amp; operator-=(int n)
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>減少 pop 數量 n</pre>
+						</div>
+					</div>
+				</div>
+				
+				<div>
+					<a name="stf_1_5"></a>
+					<div class="InfoName">
+						<div>
+							scoped_pop_t
+						</div>
+						<div class="InfoNameLv1">
+							void operator--()
+						</div>
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>減少 pop 數量 1</pre>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+		</div>
+	</div>
+
+	<div style="text-align: center;margin-top: 10px;"><a href="https://github.com/zuiwuchang" target="_blank">https://github.com/zuiwuchang<br/>
+	by dark king</a></div>
+</div>
+</body>
+</html>
