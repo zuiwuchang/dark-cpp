@@ -91,6 +91,13 @@
 			]
 		},
 		{
+			"overview":"context_t 的一個 scoped型別 且析構時不會執行 lua_close",
+			"type":{
+				"Name":"scoped_context_t",
+				"Text":"class scoped_context_t:public context_t,boost::noncopyable"
+			}
+		},
+		{
 			"overview":"在 析構時 執行 lua_pop 操作",
 			"type":{
 				"Name":"scoped_pop_t",

@@ -4,6 +4,8 @@
 
 #include <lua/lua.hpp>
 
+#include <string>
+
 #include <boost/smart_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
@@ -288,6 +290,16 @@ namespace dark
 			{
 				lua_getglobal(_l.get(),name.c_str());
 			}
+			
+			//check
+			inline bool check_stack(int sz)
+			{
+				return lua_checkstack(_l.get(),sz) != 0;
+			}
+			inline void l_check_stack(int sz, const char *msg=NULL)
+			{
+				luaL_checkstack(_l.get(),sz,msg);
+			}
 
 			/******	返回數據	******/
 			inline bool is_function(int idx)const
@@ -319,6 +331,38 @@ namespace dark
 				return lua_isnone(_l.get(),idx);
 			}
 
+			inline bool to_boolean(int idx)
+			{
+				return lua_toboolean(_l.get(),idx) != 0;
+			}
+			inline lua_Integer to_integer(int idx)
+			{
+				return lua_tointeger(_l.get(),idx);
+			}
+			inline lua_Number to_tonumber(int idx)
+			{
+				return lua_tonumber(_l.get(),idx);
+			}
+			inline std::string to_string(int idx,size_t *len = NULL)
+			{
+				return lua_tolstring(_l.get(),idx,len);
+			}
+			inline const char* to_c_string(int idx,size_t *len = NULL)
+			{
+				return lua_tolstring(_l.get(),idx,len);
+			}
+			inline void* to_userdata(int idx)
+			{
+				return lua_touserdata(_l.get(),idx);
+			}
+			inline lua_State* to_thread(int idx)
+			{
+				return lua_tothread(_l.get(),idx);
+			}
+			inline lua_CFunction to_cfunction(int idx)
+			{
+				return lua_tocfunction(_l.get(),idx);
+			}
 
 			/***	table 操作	***/
 
@@ -389,6 +433,27 @@ namespace dark
 			}
 		};
 
+		//lua 的 scoped 運行 環境 析構時不會 調用 lua_close
+		//方便 用在 lua c擴展函數 中
+		class scoped_context_t:public context_t,boost::noncopyable
+		{
+		public:
+			scoped_context_t(lua_State* l)
+				:context_t(l,false)
+			{
+
+			}
+			scoped_context_t(const l_spt& l)
+				:context_t(l.get(),false)
+			{
+
+			}
+			scoped_context_t(const context_t& l)
+				:context_t(l.get(),false)
+			{
+
+			}
+		};
 
 		//在 析構時 執行 lua_pop 操作
 		class scoped_pop_t

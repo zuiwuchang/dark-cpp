@@ -91,22 +91,29 @@
 				
 			
 			
-				<a class="LinkLv1" href="#st_1">scoped_pop_t</a>
+				<a class="LinkLv1" href="#st_1">scoped_context_t</a>
 
 				
 
 				
-					<a class="LinkLv2" href="#stf_1_0">scoped_pop_t(lua_State* l,int n)</a>
+			
+			
+				<a class="LinkLv1" href="#st_2">scoped_pop_t</a>
+
 				
-					<a class="LinkLv2" href="#stf_1_1">scoped_pop_t(context_t l,int n)</a>
+
 				
-					<a class="LinkLv2" href="#stf_1_2">scoped_pop_t&amp; operator&#43;=(int n)</a>
+					<a class="LinkLv2" href="#stf_2_0">scoped_pop_t(lua_State* l,int n)</a>
 				
-					<a class="LinkLv2" href="#stf_1_3">void operator&#43;&#43;()</a>
+					<a class="LinkLv2" href="#stf_2_1">scoped_pop_t(context_t l,int n)</a>
 				
-					<a class="LinkLv2" href="#stf_1_4">scoped_pop_t&amp; operator-=(int n)</a>
+					<a class="LinkLv2" href="#stf_2_2">scoped_pop_t&amp; operator&#43;=(int n)</a>
 				
-					<a class="LinkLv2" href="#stf_1_5">void operator--()</a>
+					<a class="LinkLv2" href="#stf_2_3">void operator&#43;&#43;()</a>
+				
+					<a class="LinkLv2" href="#stf_2_4">scoped_pop_t&amp; operator-=(int n)</a>
+				
+					<a class="LinkLv2" href="#stf_2_5">void operator--()</a>
 				
 			
 			
@@ -475,6 +482,25 @@ nrec 預計 將使用的 hash表大小 的參考值</pre>
 				<div>
 					<a name="st_1"></a>
 					<div class="InfoName">
+						scoped_context_t
+					</div>
+					<div class="InfoTextBox">
+						<div class="InfoText">
+							<pre>context_t 的一個 scoped型別 且析構時不會執行 lua_close</pre>
+							<pre>class scoped_context_t:public context_t,boost::noncopyable</pre>
+						</div>
+					</div>
+				</div>
+				
+				
+
+				
+			</div>
+			
+			<div>
+				<div>
+					<a name="st_2"></a>
+					<div class="InfoName">
 						scoped_pop_t
 					</div>
 					<div class="InfoTextBox">
@@ -489,7 +515,7 @@ nrec 預計 將使用的 hash表大小 的參考值</pre>
 
 				
 				<div>
-					<a name="stf_1_0"></a>
+					<a name="stf_2_0"></a>
 					<div class="InfoName">
 						<div>
 							scoped_pop_t
@@ -506,7 +532,7 @@ nrec 預計 將使用的 hash表大小 的參考值</pre>
 				</div>
 				
 				<div>
-					<a name="stf_1_1"></a>
+					<a name="stf_2_1"></a>
 					<div class="InfoName">
 						<div>
 							scoped_pop_t
@@ -523,7 +549,7 @@ nrec 預計 將使用的 hash表大小 的參考值</pre>
 				</div>
 				
 				<div>
-					<a name="stf_1_2"></a>
+					<a name="stf_2_2"></a>
 					<div class="InfoName">
 						<div>
 							scoped_pop_t
@@ -540,7 +566,7 @@ nrec 預計 將使用的 hash表大小 的參考值</pre>
 				</div>
 				
 				<div>
-					<a name="stf_1_3"></a>
+					<a name="stf_2_3"></a>
 					<div class="InfoName">
 						<div>
 							scoped_pop_t
@@ -557,7 +583,7 @@ nrec 預計 將使用的 hash表大小 的參考值</pre>
 				</div>
 				
 				<div>
-					<a name="stf_1_4"></a>
+					<a name="stf_2_4"></a>
 					<div class="InfoName">
 						<div>
 							scoped_pop_t
@@ -574,7 +600,7 @@ nrec 預計 將使用的 hash表大小 的參考值</pre>
 				</div>
 				
 				<div>
-					<a name="stf_1_5"></a>
+					<a name="stf_2_5"></a>
 					<div class="InfoName">
 						<div>
 							scoped_pop_t
