@@ -403,13 +403,13 @@ namespace dark
 
 			/***	熱更新 操作	***/
 			//加載 字符串 作為lua腳本 並作為匿名函數 返回
-			inline int l_loadstring(const char* s)
+			inline bool l_loadstring(const char* s)
 			{
-				return luaL_loadstring(_l.get(),s);
+				return luaL_loadstring(_l.get(),s) == LUA_OK;
 			}
-			inline int l_loadstring(const std::string& s)
+			inline bool l_loadstring(const std::string& s)
 			{
-				return luaL_loadstring(_l.get(),s.c_str());
+				return luaL_loadstring(_l.get(),s.c_str()) == LUA_OK;
 			}
 			//加載 文件 作為lua腳本 並作為匿名函數 返回
 			inline int l_loadfile(const char* f)
@@ -427,7 +427,7 @@ namespace dark
 			{
 				lua_call(_l.get(),nargs,nresults);
 			}
-			inline bool pcall(int nargs	/*參數數量*/ , int nresults/*返回值數量*/,int errfunc/*棧中的一個 錯誤回調函數*/)
+			inline bool pcall(int nargs	/*參數數量*/ , int nresults/*返回值數量*/,int errfunc = NULL/*棧中的一個 錯誤回調函數*/)
 			{
 				return lua_pcall(_l.get(),nargs,nresults,errfunc) == LUA_OK;
 			}
